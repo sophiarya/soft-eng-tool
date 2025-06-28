@@ -57,7 +57,6 @@
     </script>
 
     <style>
-
         details > summary {
             list-style: none; 
         }
@@ -72,77 +71,103 @@
 </head>
 <body class="bg-brand-gray-light font-poppins text-brand-gray-text antialiased">
 
-    <div class="min-h-screen w-full flex flex-col items-center py-16 sm:py-20 lg:py-28 px-4">
-        <main class="w-full max-w-5xl flex flex-col items-center gap-10">
+    <div class="min-h-screen w-full flex flex-col items-center py-8 sm:py-12 md:py-16 lg:py-20 xl:py-28 px-3 sm:px-4">
+        <main class="w-full max-w-5xl flex flex-col items-center gap-6 sm:gap-8 md:gap-10">
 
-            
             <!-- Header -->
-            <header class="text-center flex flex-col items-center gap-2 max-w-xl">
+            <header class="text-center flex flex-col items-center gap-1 sm:gap-2 max-w-xl px-2">
                 <a href="search.html" class="no-underline">
-                    <h1 class="text-4xl sm:text-5xl font-bold leading-tight">
+                    <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
                         <span class="text-brand-gray">Juris</span><span class="text-brand-blue">Topic</span>
                     </h1>
                 </a>
-                <p class="text-base sm:text-lg text-brand-gray-text">
+                <p class="text-sm sm:text-base md:text-lg text-brand-gray-text px-4">
                     A Smarter Way to Explore Philippine Legal Topics
                 </p>
             </header>
 
             <!-- Topic Hierarchy Card -->
-            <section class="w-full bg-white rounded-2xl shadow-primary border border-brand-gray-border p-6 sm:p-8 md:p-10 flex flex-col gap-6">
-                <h2 class="text-2xl font-semibold text-brand-gray">Topic Hierarchy</h2>
-                <div class="border border-brand-gray-border rounded-lg p-4 space-y-2">
+            <section class="w-full bg-white rounded-xl sm:rounded-2xl shadow-primary border border-brand-gray-border p-4 sm:p-6 md:p-8 lg:p-10 flex flex-col gap-4 sm:gap-6">
+                <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-brand-gray">Topic Hierarchy</h2>
+                <div class="border border-brand-gray-border rounded-lg p-3 sm:p-4 space-y-2">
 
                 <!-- Root Level: Criminal Law -->
-                <div class="space-y-4">
+                <div class="space-y-3 sm:space-y-4">
                     <details open class="group">
+<<<<<<< HEAD
                         <summary class="flex items-center justify-between cursor-pointer p-3 rounded-lg hover:bg-brand-gray-light transition-colors">
                             <div class="flex items-center gap-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="chevron h-5 w-5 text-brand-gray-text transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
                                 <img src="src/Icon.svg" alt="How it works icon" class="h-6 w-6" />
                                 <span id="active-topic" class="topic-title text-lg font-semibold text-brand-gray hover:underline cursor-pointer" data-topic="Criminal Law (12)">Criminal Law (12)</span>
                             </div>
+=======
+                        <summary class="flex items-center justify-between cursor-pointer p-2 sm:p-3 rounded-lg hover:bg-brand-gray-light transition-colors">
+                            <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+                                <img src="src/Icon.svg" alt="How it works icon" class="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 flex-shrink-0" />
+                                <h3 class="text-sm sm:text-base md:text-lg font-semibold text-brand-gray truncate">Criminal Law (12)</h3>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="chevron h-4 w-4 sm:h-5 sm:w-5 text-brand-gray-text transition-transform duration-200 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+>>>>>>> 093402dff96a70d600f28af527cf6b5456bec78c
                         </summary>
                         
                         <!-- Keywords for Criminal Law -->
-                        <div class="flex flex-wrap items-center gap-2 pt-2 pb-4 pl-12">
-                            <span class="bg-brand-blue-bg border border-brand-blue-light text-brand-blue-dark rounded-full px-3 py-1 text-sm font-medium">penal code</span>
-                            <span class="bg-brand-blue-bg border border-brand-blue-light text-brand-blue-dark rounded-full px-3 py-1 text-sm font-medium">criminal liability</span>
-                            <span class="bg-brand-blue-bg border border-brand-blue-light text-brand-blue-dark rounded-full px-3 py-1 text-sm font-medium">felony</span>
+                        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-2 pb-3 sm:pb-4 pl-8 sm:pl-10 md:pl-12">
+                            <span class="bg-brand-blue-bg border border-brand-blue-light text-brand-blue-dark rounded-full px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-medium">penal code</span>
+                            <span class="bg-brand-blue-bg border border-brand-blue-light text-brand-blue-dark rounded-full px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-medium">criminal liability</span>
+                            <span class="bg-brand-blue-bg border border-brand-blue-light text-brand-blue-dark rounded-full px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-medium">felony</span>
                         </div>
 
                         <!-- Nested Children of Criminal Law -->
-                        <div class="ml-6 pl-6 border-l-2 border-brand-gray-border space-y-4">
+                        <div class="ml-4 sm:ml-6 pl-3 sm:pl-6 border-l-2 border-brand-gray-border space-y-3 sm:space-y-4">
                             
                             <!-- Level 2: Property Crimes -->
                             <details open class="group">
+<<<<<<< HEAD
                                 <summary class="flex items-center justify-between cursor-pointer p-3 rounded-lg hover:bg-brand-gray-light transition-colors">
                                     <div class="flex items-center gap-3">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="chevron h-5 w-5 text-brand-gray-text transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
                                         <img src="src/Icon.svg" alt="How it works icon" class="h-6 w-6" />
                                         <span id="active-topic" class="topic-title text-lg font-semibold text-brand-gray hover:underline cursor-pointer" data-topic="Property Crimes (8)">Property Crimes (8)</span>
                                     </div>
+=======
+                                <summary class="flex items-center justify-between cursor-pointer p-2 sm:p-3 rounded-lg hover:bg-brand-gray-light transition-colors">
+                                    <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+                                        <img src="src/Icon.svg" alt="How it works icon" class="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 flex-shrink-0" />
+                                        <h3 class="text-sm sm:text-base md:text-lg font-semibold text-brand-gray truncate">Property Crimes (8)</h3>
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="chevron h-4 w-4 sm:h-5 sm:w-5 text-brand-gray-text transition-transform duration-200 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+>>>>>>> 093402dff96a70d600f28af527cf6b5456bec78c
                                 </summary>
                                 
-                                <div class="flex flex-wrap items-center gap-2 pt-2 pb-4 pl-12">
-                                     <span class="bg-brand-blue-bg border border-brand-blue-light text-brand-blue-dark rounded-full px-3 py-1 text-sm font-medium">ownership</span>
-                                     <span class="bg-brand-blue-bg border border-brand-blue-light text-brand-blue-dark rounded-full px-3 py-1 text-sm font-medium">possession</span>
+                                <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-2 pb-3 sm:pb-4 pl-8 sm:pl-10 md:pl-12">
+                                     <span class="bg-brand-blue-bg border border-brand-blue-light text-brand-blue-dark rounded-full px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-medium">ownership</span>
+                                     <span class="bg-brand-blue-bg border border-brand-blue-light text-brand-blue-dark rounded-full px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-medium">possession</span>
                                 </div>
 
                                 <!-- Level 3: Theft -->
-                                <div class="ml-6 pl-6 border-l-2 border-brand-gray-border space-y-4">
+                                <div class="ml-4 sm:ml-6 pl-3 sm:pl-6 border-l-2 border-brand-gray-border space-y-3 sm:space-y-4">
                                     <details open class="group">
+<<<<<<< HEAD
                                         <summary class="flex items-center justify-between cursor-pointer p-3 rounded-lg hover:bg-brand-gray-light transition-colors">
                                             <div class="flex items-center gap-3">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="chevron h-5 w-5 text-brand-gray-text transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
                                                 <img src="src/Icon.svg" alt="How it works icon" class="h-6 w-6" />
                                                 <span id="active-topic" class="topic-title text-lg font-semibold text-brand-gray hover:underline cursor-pointer" data-topic="Theft (5)">Theft (5)</span>
                                             </div>
+=======
+                                        <summary class="flex items-center justify-between cursor-pointer p-2 sm:p-3 rounded-lg hover:bg-brand-gray-light transition-colors">
+                                            <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+                                                <img src="src/Icon.svg" alt="How it works icon" class="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 flex-shrink-0" />
+                                                <h3 class="text-sm sm:text-base md:text-lg font-semibold text-brand-gray truncate">Theft (5)</h3>
+                                            </div>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="chevron h-4 w-4 sm:h-5 sm:w-5 text-brand-gray-text transition-transform duration-200 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+>>>>>>> 093402dff96a70d600f28af527cf6b5456bec78c
                                         </summary>
-                                        <div class="flex flex-wrap items-center gap-2 pt-2 pb-4 pl-12">
-                                             <span class="bg-brand-blue-bg border border-brand-blue-light text-brand-blue-dark rounded-full px-3 py-1 text-sm font-medium">Article 308</span>
-                                             <span class="bg-brand-blue-bg border border-brand-blue-light text-brand-blue-dark rounded-full px-3 py-1 text-sm font-medium">intent to gain</span>
-                                             <span class="bg-brand-blue-bg border border-brand-blue-light text-brand-blue-dark rounded-full px-3 py-1 text-sm font-medium">without consent</span>
+                                        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-2 pb-3 sm:pb-4 pl-8 sm:pl-10 md:pl-12">
+                                             <span class="bg-brand-blue-bg border border-brand-blue-light text-brand-blue-dark rounded-full px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-medium">Article 308</span>
+                                             <span class="bg-brand-blue-bg border border-brand-blue-light text-brand-blue-dark rounded-full px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-medium">intent to gain</span>
+                                             <span class="bg-brand-blue-bg border border-brand-blue-light text-brand-blue-dark rounded-full px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-medium">without consent</span>
                                         </div>
                                     </details>
                                 </div>
@@ -154,36 +179,43 @@
             </section>
 
             <!-- Relevant Documents Card -->
+<<<<<<< HEAD
             <section id="relevant-docs" class="hidden  w-full bg-white rounded-2xl shadow-primary border border-brand-gray-border p-6 sm:p-8 md:p-10 flex flex-col gap-4" data-show="">
                 <h2 class="text-2xl font-semibold text-brand-gray">Relevant Documents for <span class="text-brand-blue">Theft</span></h2>
+=======
+            <section class="w-full bg-white rounded-xl sm:rounded-2xl shadow-primary border border-brand-gray-border p-4 sm:p-6 md:p-8 lg:p-10 flex flex-col gap-3 sm:gap-4">
+                <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-brand-gray">
+                    Relevant Documents for <span class="text-brand-blue">Theft</span>
+                </h2>
+>>>>>>> 093402dff96a70d600f28af527cf6b5456bec78c
                 <div class="flex flex-col divide-y divide-brand-gray-border">
-                    <div class="py-4">
-                        <p class="text-sm text-brand-gray-text">G.R. No. L-41462</p>
-                        <a href="#" class="text-lg font-medium text-brand-blue hover:underline">People vs. Dino</a>
+                    <div class="py-3 sm:py-4">
+                        <p class="text-xs sm:text-sm text-brand-gray-text">G.R. No. L-41462</p>
+                        <a href="#" class="text-sm sm:text-base md:text-lg font-medium text-brand-blue hover:underline block mt-1">People vs. Dino</a>
                     </div>
-                    <div class="py-4">
-                        <p class="text-sm text-brand-gray-text">G.R. No. 5051</p>
-                        <a href="#" class="text-lg font-medium text-brand-blue hover:underline">People vs. Gatchalian</a>
+                    <div class="py-3 sm:py-4">
+                        <p class="text-xs sm:text-sm text-brand-gray-text">G.R. No. 5051</p>
+                        <a href="#" class="text-sm sm:text-base md:text-lg font-medium text-brand-blue hover:underline block mt-1">People vs. Gatchalian</a>
                     </div>
-                    <div class="py-4">
-                        <p class="text-sm text-brand-gray-text">G.R. No. 5051</p>
-                        <a href="#" class="text-lg font-medium text-brand-blue hover:underline">People vs. Miranda</a>
+                    <div class="py-3 sm:py-4">
+                        <p class="text-xs sm:text-sm text-brand-gray-text">G.R. No. 5051</p>
+                        <a href="#" class="text-sm sm:text-base md:text-lg font-medium text-brand-blue hover:underline block mt-1">People vs. Miranda</a>
                     </div>
-                    <div class="py-4">
-                        <p class="text-sm text-brand-gray-text">G.R. No. 5051</p>
-                        <a href="#" class="text-lg font-medium text-brand-blue hover:underline">People vs. Santos</a>
+                    <div class="py-3 sm:py-4">
+                        <p class="text-xs sm:text-sm text-brand-gray-text">G.R. No. 5051</p>
+                        <a href="#" class="text-sm sm:text-base md:text-lg font-medium text-brand-blue hover:underline block mt-1">People vs. Santos</a>
                     </div>
-                    <div class="py-4">
-                        <p class="text-sm text-brand-gray-text">G.R. No. 5051</p>
-                        <a href="#" class="text-lg font-medium text-brand-blue hover:underline">People vs. Cabalse</a>
+                    <div class="py-3 sm:py-4">
+                        <p class="text-xs sm:text-sm text-brand-gray-text">G.R. No. 5051</p>
+                        <a href="#" class="text-sm sm:text-base md:text-lg font-medium text-brand-blue hover:underline block mt-1">People vs. Cabalse</a>
                     </div>
                 </div>
             </section>
 
             <!-- Footer Action -->
-            <footer class="mt-4">
-                <a href="search.html" class="inline-flex items-center gap-3 bg-white rounded-xl shadow-button border border-brand-gray-border px-8 py-3 text-lg font-semibold text-brand-gray hover:shadow-lg transition-shadow duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <footer class="mt-2 sm:mt-4">
+                <a href="search.html" class="inline-flex items-center gap-2 sm:gap-3 bg-white rounded-lg sm:rounded-xl shadow-button border border-brand-gray-border px-6 sm:px-8 py-2.5 sm:py-3 text-base sm:text-lg font-semibold text-brand-gray hover:shadow-lg transition-shadow duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
                     </svg>
                     Start a New Search
