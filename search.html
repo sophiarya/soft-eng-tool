@@ -49,36 +49,36 @@
 </head>
 <body class="bg-brand-gray-light font-poppins text-brand-gray-text antialiased">
 
-    <div class="min-h-screen w-full flex flex-col items-center py-16 sm:py-20 lg:py-28 px-4">
+    <div class="min-h-screen w-full flex flex-col items-center py-8 sm:py-12 md:py-16 lg:py-20 xl:py-28 px-3 sm:px-4">
     
-        <main class="w-full max-w-5xl flex flex-col items-center gap-10">
+        <main class="w-full max-w-5xl flex flex-col items-center gap-6 sm:gap-8 md:gap-10">
 
             <!-- Header -->
-            <header class="text-center flex flex-col items-center gap-2 max-w-xl">
+            <header class="text-center flex flex-col items-center gap-1 sm:gap-2 max-w-xl px-2">
                 <a href="search.html" class="no-underline">
-                    <h1 class="text-4xl sm:text-5xl font-bold leading-tight">
+                    <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
                         <span class="text-brand-gray">Juris</span><span class="text-brand-blue">Topic</span>
                     </h1>
                 </a>
-                <p class="text-base sm:text-lg text-brand-gray-text">
+                <p class="text-sm sm:text-base md:text-lg text-brand-gray-text px-4">
                     A Smarter Way to Explore Philippine Legal Topics
                 </p>
             </header>
 
             <!-- Search Section -->
-            <section class="w-full bg-white rounded-2xl shadow-primary border border-brand-gray-border p-6 sm:p-8 md:p-10">
-                <form action="results.html" class="flex flex-col gap-6">
+            <section class="w-full bg-white rounded-xl sm:rounded-2xl shadow-primary border border-brand-gray-border p-4 sm:p-6 md:p-8 lg:p-10">
+                <form action="results.html" class="flex flex-col gap-4 sm:gap-6">
                     <label for="search-query" class="sr-only">Search Query</label>
                     <textarea
                         id="search-query"
-                        rows="5"
+                        rows="4"
                         placeholder="Enter a case name, topic, or keyword..."
-                        class="w-full p-4 rounded-xl text-base sm:text-lg bg-white border-2 border-brand-gray-border placeholder:text-gray-400 focus:ring-2 focus:ring-brand-blue-light focus:border-brand-blue-light focus:outline-none transition duration-200"
+                        class="w-full p-3 sm:p-4 rounded-lg sm:rounded-xl text-sm sm:text-base md:text-lg bg-white border-2 border-brand-gray-border placeholder:text-gray-400 focus:ring-2 focus:ring-brand-blue-light focus:border-brand-blue-light focus:outline-none transition duration-200 resize-none"
                     ></textarea>
                     
                     <div class="flex justify-center">
-                        <button type="submit" class="w-full sm:w-auto text-white text-lg font-semibold bg-brand-blue hover:bg-brand-blue-dark rounded-xl shadow-button px-10 py-3 flex items-center justify-center gap-3 hover:shadow-lg transition-all duration-300">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <button type="submit" class="w-full sm:w-auto text-white text-base sm:text-lg font-semibold bg-brand-blue hover:bg-brand-blue-dark rounded-lg sm:rounded-xl shadow-button px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 flex items-center justify-center gap-2 sm:gap-3 hover:shadow-lg transition-all duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor">
                               <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
                             </svg>
                             <span>Search Topics</span>
@@ -88,90 +88,91 @@
             </section>
 
             <!-- "How it Works" Section -->
-            <section class="w-full bg-white rounded-2xl shadow-primary border border-brand-gray-border p-6 sm:p-8 md:p-10 flex flex-col gap-6">
+            <section class="w-full bg-white rounded-xl sm:rounded-2xl shadow-primary border border-brand-gray-border p-4 sm:p-6 md:p-8 lg:p-10 flex flex-col gap-4 sm:gap-6">
                 <!-- Section Header -->
-                <div class="flex items-start sm:items-center gap-4">
+                <div class="flex items-start sm:items-center gap-3 sm:gap-4">
                     <!-- Icon -->
-                    <div class="flex-shrink-0">
-                        <img src="src/Icon.svg" alt="How it works icon" class="h-9 w-9" />
-
+                    <div class="flex-shrink-0 mt-0.5 sm:mt-0">
+                        <img src="src/Icon.svg" alt="How it works icon" class="h-6 w-6 sm:h-8 sm:w-8 md:h-9 md:w-9" />
                     </div>
                     <!-- Text Content -->
                     <div>
-                        <h2 class="text-2xl font-semibold leading-tight">
+                        <h2 class="text-lg sm:text-md md:text-2xl font-semibold leading-tight">
                             <span class="text-brand-gray">See How Juris</span><span class="text-brand-blue">Topic</span><span class="text-brand-gray"> Works</span>
                         </h2>
-                        <p class="text-brand-gray-text text-base">Explore our topic modeling visualization with sample legal data</p>
+                        <p class="text-brand-gray-text text-sm sm:text-base mt-1">Explore our topic modeling visualization with sample legal data</p>
                     </div>
                 </div>
                 
                 <!-- Visualization Container -->
-                <div class="w-full bg-brand-viz-bg rounded-lg border border-brand-viz-border overflow-hidden p-4">
-                    <svg viewBox="0 0 950 720" class="w-full h-auto" style="font-family: 'Poppins', sans-serif;">
-                        <!-- Left-side labels -->
-                        <text x="260" y="90" text-anchor="end" font-size="14" fill="#3B3B3B">theft_crime_burglary -</text>
-                        <text x="260" y="164" text-anchor="end" font-size="14" fill="#3B3B3B">robbery_armed_mugging -</text>
-                        <text x="260" y="221" text-anchor="end" font-size="14" fill="#3B3B3B">criminal_justice_law -</text>
-                        <text x="260" y="347" text-anchor="end" font-size="14" fill="#3B3B3B">gangs_gang_violence -</text>
-                        <text x="260" y="469" text-anchor="end" font-size="14" fill="#3B3B3B">police_arrest_suspect -</text>
-                        <text x="260" y="591" text-anchor="end" font-size="14" fill="#3B3B3B">court_trial_sentence -</text>
+                <div class="w-full bg-brand-viz-bg rounded-lg border border-brand-viz-border overflow-hidden p-2 sm:p-4">
+                    <div class="overflow-x-auto">
+                        <svg viewBox="0 0 950 720" class="w-full min-w-[600px] h-auto" style="font-family: 'Poppins', sans-serif;">
+                            <!-- Left-side labels -->
+                            <text x="260" y="90" text-anchor="end" font-size="12" fill="#3B3B3B">theft_crime_burglary -</text>
+                            <text x="260" y="164" text-anchor="end" font-size="12" fill="#3B3B3B">robbery_armed_mugging -</text>
+                            <text x="260" y="221" text-anchor="end" font-size="12" fill="#3B3B3B">criminal_justice_law -</text>
+                            <text x="260" y="347" text-anchor="end" font-size="12" fill="#3B3B3B">gangs_gang_violence -</text>
+                            <text x="260" y="469" text-anchor="end" font-size="12" fill="#3B3B3B">police_arrest_suspect -</text>
+                            <text x="260" y="591" text-anchor="end" font-size="12" fill="#3B3B3B">court_trial_sentence -</text>
 
-                        <!-- Chart Area Background -->
-                        <rect x="270" y="20" width="660" height="650" fill="white" />
+                            <!-- Chart Area Background -->
+                            <rect x="270" y="20" width="660" height="650" fill="white" />
 
-                        <!-- Chart Elements -->
-                        <g stroke-width="2">
-                            <rect x="270" y="61" width="327" height="77" fill="none" stroke="#4da07c" />
-                            <rect x="270" y="183" width="369" height="77" fill="none" stroke="#4da07c" />
-                            <line x1="597" y1="100" x2="641" y2="222" stroke="#4da07c" />
-                            <rect x="270" y="305" width="429" height="77" fill="none" stroke="#f7716c" />
-                            <rect x="270" y="427" width="458" height="77" fill="none" stroke="#1fc2cf" />
-                            <rect x="270" y="549" width="526" height="77" fill="none" stroke="#0074d9" />
-                            <rect x="597" y="344" width="97" height="119" fill="none" stroke="#0074d9" />
-                            <rect x="694" y="404" width="97" height="183" fill="none" stroke="#0074d9" />
-                            <line x1="698" y1="382" x2="742" y2="443" stroke="#0074d9" />
-                            <line x1="597" y1="100" x2="694" y2="181" stroke="#3B3B3B" stroke-dasharray="4 4" />
-                        </g>
-
-                        <!-- Nodes (Circles) -->
-                        <g fill="#3B3B3B">
-                            <circle cx="590" cy="99" r="6" />
-                            <circle cx="640" cy="221" r="6" />
-                            <circle cx="692" cy="180" r="6" />
-                            <circle cx="698" cy="343" r="6" />
-                            <circle cx="725" cy="465" r="6" />
-                            <circle cx="790" cy="587" r="6" />
-                            <circle cx="742" cy="442" r="6" />
-                            <circle cx="788" cy="493" r="6" />
-                        </g>
-
-                        <!-- Bottom Axis -->
-                        <g transform="translate(270, 680)">
-                            <line x1="0" y1="0" x2="660" y2="0" stroke="#626262" stroke-width="1" />
-                            <g text-anchor="middle" font-size="14" fill="#3B3B3B">
-                                <text x="0" y="25">0</text>
-                                <line x1="0" y1="-5" x2="0" y2="0" stroke="#626262" stroke-width="1" />
-                                <text x="165" y="25">0.5</text>
-                                <line x1="165" y1="-5" x2="165" y2="0" stroke="#626262" stroke-width="1" />
-                                <text x="330" y="25">1</text>
-                                <line x1="330" y1="-5" x2="330" y2="0" stroke="#626262" stroke-width="1" />
-                                <text x="495" y="25">1.5</text>
-                                <line x1="495" y1="-5" x2="495" y2="0" stroke="#626262" stroke-width="1" />
-                                <text x="660" y="25">2</text>
-                                <line x1="660" y1="-5" x2="660" y2="0" stroke="#626262" stroke-width="1" />
+                            <!-- Chart Elements -->
+                            <g stroke-width="2">
+                                <rect x="270" y="61" width="327" height="77" fill="none" stroke="#4da07c" />
+                                <rect x="270" y="183" width="369" height="77" fill="none" stroke="#4da07c" />
+                                <line x1="597" y1="100" x2="641" y2="222" stroke="#4da07c" />
+                                <rect x="270" y="305" width="429" height="77" fill="none" stroke="#f7716c" />
+                                <rect x="270" y="427" width="458" height="77" fill="none" stroke="#1fc2cf" />
+                                <rect x="270" y="549" width="526" height="77" fill="none" stroke="#0074d9" />
+                                <rect x="597" y="344" width="97" height="119" fill="none" stroke="#0074d9" />
+                                <rect x="694" y="404" width="97" height="183" fill="none" stroke="#0074d9" />
+                                <line x1="698" y1="382" x2="742" y2="443" stroke="#0074d9" />
+                                <line x1="597" y1="100" x2="694" y2="181" stroke="#3B3B3B" stroke-dasharray="4 4" />
                             </g>
-                        </g>
-                    </svg>
+
+                            <!-- Nodes (Circles) -->
+                            <g fill="#3B3B3B">
+                                <circle cx="590" cy="99" r="5" />
+                                <circle cx="640" cy="221" r="5" />
+                                <circle cx="692" cy="180" r="5" />
+                                <circle cx="698" cy="343" r="5" />
+                                <circle cx="725" cy="465" r="5" />
+                                <circle cx="790" cy="587" r="5" />
+                                <circle cx="742" cy="442" r="5" />
+                                <circle cx="788" cy="493" r="5" />
+                            </g>
+
+                            <!-- Bottom Axis -->
+                            <g transform="translate(270, 680)">
+                                <line x1="0" y1="0" x2="660" y2="0" stroke="#626262" stroke-width="1" />
+                                <g text-anchor="middle" font-size="12" fill="#3B3B3B">
+                                    <text x="0" y="25">0</text>
+                                    <line x1="0" y1="-5" x2="0" y2="0" stroke="#626262" stroke-width="1" />
+                                    <text x="165" y="25">0.5</text>
+                                    <line x1="165" y1="-5" x2="165" y2="0" stroke="#626262" stroke-width="1" />
+                                    <text x="330" y="25">1</text>
+                                    <line x1="330" y1="-5" x2="330" y2="0" stroke="#626262" stroke-width="1" />
+                                    <text x="495" y="25">1.5</text>
+                                    <line x1="495" y1="-5" x2="495" y2="0" stroke="#626262" stroke-width="1" />
+                                    <text x="660" y="25">2</text>
+                                    <line x1="660" y1="-5" x2="660" y2="0" stroke="#626262" stroke-width="1" />
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
                 </div>
                 
                 <!-- Legend -->
-                <div class="flex flex-col sm:flex-row sm:justify-center items-start sm:items-center gap-x-12 gap-y-4 pt-4 text-sm text-brand-gray">
-                    <div class="flex items-center gap-3">
-                        <div class="w-3 h-3 bg-brand-gray rounded-full"></div>
+                <div class="flex flex-col sm:flex-row sm:justify-center items-start sm:items-center gap-x-8 md:gap-x-12 gap-y-3 sm:gap-y-4 pt-2 sm:pt-4 text-xs sm:text-sm text-brand-gray">
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-brand-gray rounded-full flex-shrink-0"></div>
                         <span>Topic nodes with document counts</span>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-px bg-brand-gray"></div>
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <div class="w-8 sm:w-10 h-px bg-brand-gray flex-shrink-0"></div>
                         <span>Hierarchical relationships</span>
                     </div>
                 </div>
