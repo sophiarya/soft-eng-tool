@@ -4,6 +4,11 @@
 
 -->
 
+<!-- TO DO:
+ Nath: Fix Animation
+ - remove the hyperlink in text in each div inside the summary
+-->
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -93,10 +98,10 @@
                     <details open class="group">
                         <summary class="flex items-center justify-between cursor-pointer p-3 rounded-lg hover:bg-brand-gray-light transition-colors">
                             <div class="flex items-center gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="chevron h-5 w-5 text-brand-gray-text transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
                                 <img src="src/Icon.svg" alt="How it works icon" class="h-6 w-6" />
-                                <h3 class="text-lg font-semibold text-brand-gray">Criminal Law (12)</h3>
+                                <span id="active-topic" class="topic-title text-lg font-semibold text-brand-gray hover:underline cursor-pointer" data-topic="Criminal Law (12)">Criminal Law (12)</span>
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="chevron h-5 w-5 text-brand-gray-text transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
                         </summary>
                         
                         <!-- Keywords for Criminal Law -->
@@ -113,11 +118,10 @@
                             <details open class="group">
                                 <summary class="flex items-center justify-between cursor-pointer p-3 rounded-lg hover:bg-brand-gray-light transition-colors">
                                     <div class="flex items-center gap-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="chevron h-5 w-5 text-brand-gray-text transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
                                         <img src="src/Icon.svg" alt="How it works icon" class="h-6 w-6" />
-
-                                        <h3 class="text-lg font-semibold text-brand-gray">Property Crimes (8)</h3>
+                                        <span id="active-topic" class="topic-title text-lg font-semibold text-brand-gray hover:underline cursor-pointer" data-topic="Property Crimes (8)">Property Crimes (8)</span>
                                     </div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="chevron h-5 w-5 text-brand-gray-text transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
                                 </summary>
                                 
                                 <div class="flex flex-wrap items-center gap-2 pt-2 pb-4 pl-12">
@@ -130,11 +134,10 @@
                                     <details open class="group">
                                         <summary class="flex items-center justify-between cursor-pointer p-3 rounded-lg hover:bg-brand-gray-light transition-colors">
                                             <div class="flex items-center gap-3">
-                                <img src="src/Icon.svg" alt="How it works icon" class="h-6 w-6" />
-                                                
-                                                <h3 class="text-lg font-semibold text-brand-gray">Theft (5)</h3>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="chevron h-5 w-5 text-brand-gray-text transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+                                                <img src="src/Icon.svg" alt="How it works icon" class="h-6 w-6" />
+                                                <span id="active-topic" class="topic-title text-lg font-semibold text-brand-gray hover:underline cursor-pointer" data-topic="Theft (5)">Theft (5)</span>
                                             </div>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="chevron h-5 w-5 text-brand-gray-text transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
                                         </summary>
                                         <div class="flex flex-wrap items-center gap-2 pt-2 pb-4 pl-12">
                                              <span class="bg-brand-blue-bg border border-brand-blue-light text-brand-blue-dark rounded-full px-3 py-1 text-sm font-medium">Article 308</span>
@@ -151,7 +154,7 @@
             </section>
 
             <!-- Relevant Documents Card -->
-            <section class="w-full bg-white rounded-2xl shadow-primary border border-brand-gray-border p-6 sm:p-8 md:p-10 flex flex-col gap-4">
+            <section id="relevant-docs" class="hidden  w-full bg-white rounded-2xl shadow-primary border border-brand-gray-border p-6 sm:p-8 md:p-10 flex flex-col gap-4" data-show="">
                 <h2 class="text-2xl font-semibold text-brand-gray">Relevant Documents for <span class="text-brand-blue">Theft</span></h2>
                 <div class="flex flex-col divide-y divide-brand-gray-border">
                     <div class="py-4">
@@ -187,8 +190,50 @@
                 </a>
             </footer>
 
+            <!-- Toggle Logic Script -->
+            <script>
+                const criminalLawDetails = document.getElementById('criminal-law');
+                const relevantDocsSection = document.getElementById('relevant-docs');
+
+                criminalLawDetails.addEventListener('toggle', () => {
+                if (criminalLawDetails.open) {
+                    relevantDocsSection.classList.remove('hidden');
+                } else {
+                    relevantDocsSection.classList.add('hidden');
+                }
+                });
+            </script>
+            </body>
+            </html>
+
         </main>
     </div>
+
+    <script>
+        const titles = document.querySelectorAll('.topic-title');
+        const docsSection = document.getElementById('relevant-docs');
+        const topicLabel = document.getElementById('active-topic');
+
+        titles.forEach(title => {
+            title.addEventListener('click', (e) => {
+                e.stopPropagation(); 
+                const selectedTopic = title.dataset.topic;
+                topicLabel.textContent = selectedTopic;
+                docsSection.classList.remove('hidden');
+                docsSection.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        const summaries = document.querySelectorAll('summary');
+        summaries.forEach(summary => {
+            summary.addEventListener('click', (e) => {
+                const isChevron = e.target.closest('.chevron');
+                if (!isChevron) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>

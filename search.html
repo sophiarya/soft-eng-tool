@@ -38,6 +38,12 @@
                           border: '#C9CEFF',
                         }
                     },
+
+                    backgroundImage: {
+                        'btn-gradient': 'linear-gradient(273deg, #5060FF 13.62%, #8A94FF 111.34%)',
+                        'btn-gradient-hover': 'linear-gradient(0deg, rgba(0, 0, 0, 0.30) 0%, rgba(0, 0, 0, 0.30) 100%), linear-gradient(273deg, #5060FF 13.62%, #8A94FF 111.34%)',
+                    },
+
                     boxShadow: {
                         'primary': '0px 12px 20px rgba(80, 96, 255, 0.12)',
                         'button': '0px 10px 40px rgba(80, 96, 255, 0.25)',
@@ -65,19 +71,21 @@
                 </p>
             </header>
 
-            <!-- Search Section -->
-            <section class="w-full bg-white rounded-2xl shadow-primary border border-brand-gray-border p-6 sm:p-8 md:p-10">
+            <!-- Search Card -->
+            <section class="w-full bg-white rounded-2xl border border-brand-gray-border shadow-primary p-6 sm:p-8 md:p-10 transition-all duration-200 focus-within:ring-2 focus-within:ring-[#8A94FF] focus-within:border-[#8A94FF]">
                 <form action="results.html" class="flex flex-col gap-6">
                     <label for="search-query" class="sr-only">Search Query</label>
                     <textarea
                         id="search-query"
                         rows="5"
                         placeholder="Enter a case name, topic, or keyword..."
-                        class="w-full p-4 rounded-xl text-base sm:text-lg bg-white border-2 border-brand-gray-border placeholder:text-gray-400 focus:ring-2 focus:ring-brand-blue-light focus:border-brand-blue-light focus:outline-none transition duration-200"
+                        class="w-full p-4 rounded-xl text-base sm:text-lg bg-white placeholder:text-gray-400 focus:outline-none"
                     ></textarea>
                     
                     <div class="flex justify-center">
-                        <button type="submit" class="w-full sm:w-auto text-white text-lg font-semibold bg-brand-blue hover:bg-brand-blue-dark rounded-xl shadow-button px-10 py-3 flex items-center justify-center gap-3 hover:shadow-lg transition-all duration-300">
+
+                        <!-- Search Button -->
+                        <button type="submit" class="w-full sm:w-auto text-white text-lg font-semibold bg-btn-gradient hover:bg-btn-gradient-hover rounded-xl shadow-button px-10 py-3 flex items-center justify-center gap-3 transition-all duration-300">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                               <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
                             </svg>
