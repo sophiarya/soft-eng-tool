@@ -1,0 +1,338 @@
+/* === Fonts === */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* === Colors === */
+:root {
+    --brand-blue: #5060FF;
+    --brand-blue-dark: #3F4CCC;
+    --brand-blue-light: #8A94FF;
+
+    --brand-gray: #3B3B3B;
+    --brand-gray-light: #F5F5FB;
+    --brand-gray-border: #EBEBEB;
+    --brand-gray-text: #555555;
+
+    --brand-viz-bg: #f0f1ff;
+    --brand-viz-border: #C9CEFF;
+
+    --brand-white: #FFFFFF;
+    --brand-black: #000000;
+}
+
+.secondary-color {
+    color: var(--brand-gray);
+}
+
+.primary-color {
+    color: var(--brand-blue);
+}
+
+body {
+    background-color: #F5F5FB;
+    font-family: 'Poppins', sans-serif;
+    color: var(--brand-gray-text);
+}
+
+p {
+    font: var(--brand-gray-text);
+}
+
+/*=== Layout Containers ===*/
+.page-container {
+    min-height: 100vh;  
+    width: 100%;  
+    display: flex;      
+    flex-direction: column; 
+    align-items: center; 
+    padding: 2rem;
+}
+
+.main-container {
+    width: 100%;
+    max-width: 64rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* === Logo === */
+.site-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    max-width: 36rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.site-logo-link {
+    text-decoration: none;
+}
+
+.site-logo {
+    font-weight: 700;
+    line-height: 1.2;
+    font-size: 1.5rem;
+}
+
+.site-tagline {
+    font-size: 0.875rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-top: 0.25rem;
+}
+
+/* === Search Card Container === */
+.search-card {
+    width: 100%;
+    background-color: var(--brand-white);
+    border-radius: 1rem;                  
+    border: 1px solid rgb(235 235 235 / var(--tw-border-opacity, 1));
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08); 
+    padding: 1.5rem;                    
+    transition: all 0.2s ease;
+}
+
+.search-card:focus-within {
+    border-color: var(--brand-blue-light);
+    box-shadow: 0 0 0 3px rgba(138,148,255,0.4);
+}
+
+/* === Search Form === */
+.search-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* === Textarea === */
+.search-card textarea {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #333;
+    resize: none;
+}
+
+.search-card textarea::placeholder {
+    color: #9CA3AF;
+}
+
+.search-card textarea:focus {
+    outline: none;
+}
+
+/* === Button === */
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.search-card button {
+    width: auto;
+    color: var(--brand-white);
+    font-size: 1.125rem;
+    font-weight: 600;
+    background: linear-gradient(90deg, #5060FF 0%, #8A94FF 100%);
+    border: none;
+    border-radius: 0.75rem;
+    padding: 0.75rem 2.5rem;
+    min-width: 210px;
+    min-height: 60px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.search-card button:hover {
+    background: linear-gradient(90deg, #3340B0 0%, #5A6FCC 100%);
+}
+
+.search-card #search-btn-loading {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.search-card #search-btn-loading.active {
+    display: flex;
+}
+
+/* === Spinner Loader === */
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e5e7eb;
+    border-top: 2px solid #5060FF;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.hidden {
+    display: none;
+}
+
+#search-btn-loading.active {
+    display: inline-block;
+}
+
+/* === Dendogram Section === */
+.dendogram-section {
+    width: 100%;
+    background-color: var(--brand-white);
+    border-radius: 1rem; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+    border: 1px solid var(--brand-gray-light); 
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.dendogram-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.dendogram-container {
+    width: 100%;
+    background-color: var(--brand-viz-bg);
+    border: 1px solid var(--brand-viz-border);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    padding: 0.5rem;
+    overflow-x: auto;
+}
+
+.legend-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0.5rem; 
+    padding-top: 0.5rem;
+    font-size: 0.75rem; 
+    color: var(--brand-gray);
+    justify-content: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* === Responsive Layout === */ 
+@media (max-width: 639px) {
+    .search-card button {
+        font-size: 0.875rem;
+        padding: 0.5rem 1.5rem;
+        min-width: unset;
+        width: auto;
+        min-height: 45px;
+        gap: 0.5rem;
+    }
+}
+
+@media (min-width: 640px) {
+    .page-container {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+
+    .site-header {
+        gap: 0.5rem;
+    }
+
+    .site-logo { 
+        font-size: 1.875rem;
+    }
+
+    .main-container {
+        gap: 2rem;        
+    }
+
+    .search-card {
+        padding: 2rem;
+    }
+    
+    .search-card textarea {
+        font-size: 1.125rem;
+    }
+
+    .legend-container {
+        align-items: center;
+        gap: 1.75rem; 
+        font-size: 0.875rem;
+        padding-top: 1rem; 
+    }
+
+    .legend-item {
+        gap: 0.75rem; 
+    }
+}
+
+@media (min-width: 768px) {
+    .page-container {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+
+    .site-logo { 
+        font-size: 2.25rem; 
+    }
+
+    .main-container {
+        gap: 2.5rem;
+    }
+
+    .search-card {
+        padding: 2.5rem;
+    }
+
+    .legend-container {
+        gap: 2rem; 
+    }
+}
+
+@media (min-width: 1024px) {
+    .page-container {
+        padding-top: 5rem;
+        padding-bottom: 5rem;
+    }
+
+    .site-logo { 
+        font-size: 3rem; 
+    }
+}
+
+@media (min-width: 1280px) {
+    .page-container {
+        padding-top: 7rem;
+        padding-bottom: 7rem;
+    }
+}

@@ -1,152 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JurisTopic - Search</title>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>JurisTopic - Search</title>
+        <!-- Tailwind CSS CDN -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Google Fonts: Poppins -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Google Fonts: Poppins -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <!-- Tailwind Configuration -->
+        <script src="tailwind-config.js"></script>
 
-    <!-- Custom Tailwind Configuration -->
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div class="page-container">
+            <main class="main-container">
+                <!-- Header -->
+                <header class="site-header">
+                    <a href="search.html" class="site-logo-link">
+                        <h1 class="site-logo">
+                            <span class="secondary-color">Juris</span>
+                            <span class="primary-color -ml-3">Topic</span>
+                        </h1>
+                    </a>
+                    <p class="text-sm sm:text-base mt-1">
+                        A Smarter Way to Explore Philippine Legal Topics
+                    </p>
+                </header>
+                <!-- Search Card -->
+                <section class="search-card">
+                    <form 
+                        id="search-form" 
+                        action="/search" 
+                        method="post"
+                    >
+                        <label for="search-query" class="sr-only">
+                            Search Query
+                        </label>
+                        <textarea 
+                            id="search-query" 
+                            name="search_term" 
+                            rows="4" 
+                            placeholder="Enter a search phrase or keyword..."
+                            required
+                            class="text-sm sm:text-base md:text-lg"
+                        ></textarea>
+                        <div class="button-container">
+                            <button type="submit" id="search-btn">
+                                <span 
+                                    id="search-btn-text" 
+                                    class="text-sm sm:text-base md:text-lg"
+                                >
+                                    Search Topics
+                                </span>
+                                <span id="search-btn-loading" class="hidden">
+                                    <div class="spinner"></div>
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </section>
+                <!-- Dendogram Section -->
+                <section class="dendogram-section">
+                    <div class="dendogram-header">
+                        <div class="flex-shrink-0 mt-0.5 sm:mt-0">
+                            <img 
+                                src="src\doc_icon.svg" 
+                                alt="How it works icon" 
+                                class="h-6 w-6 sm:h-8 sm:w-8 md:h-9 md:w-9" 
+                            />
+                        </div>
+                        <div>
+                            <h2 class="text-lg sm:text-md md:text-2xl font-semibold leading-tight">
+                                <span class="secondary-color">
+                                    See How Juris
+                                    <span class="primary-color -ml-1">Topic</span> 
+                                    Works
+                                </span>
+                            </h2>
+                            <p class="text-sm sm:text-base mt-1">
+                                Explore our topic modeling visualization with sample legal data
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Visualization Container -->
+                    <div class="dendogram-container">
+                        <iframe 
+                            src="src/topic_hierarchy.html" 
+                            class="w-full h-[600px] border-0 custom-scroll" 
+                            scrolling="yes"
+                        ></iframe>
+                    </div>               
+                    <!-- Legend -->
+                    <div class="legend-container">
+                        <div class="legend-item">
+                            <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-brand-gray rounded-full flex-shrink-0"></div>
+                            <span>Merged Topics</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="w-8 sm:w-10 h-px bg-brand-gray flex-shrink-0"></div>
+                            <span>Hierarchical relationships</span>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </body>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        poppins: ['Poppins', 'sans-serif'],
-                    },
-                    colors: {
-                        'brand-blue': {
-                            DEFAULT: '#5060FF',
-                            dark: '#3F4CCC', 
-                            light: '#8A94FF',
-                        },
-                        'brand-gray': {
-                            DEFAULT: '#3B3B3B',
-                            light: '#F5F5FB',
-                            border: '#EBEBEB',
-                            text: '#555555' 
-                        },
-                        'brand-viz': {
-                          bg: '#f0f1ff',
-                          border: '#C9CEFF',
-                        }
-                    },
-
-                    backgroundImage: {
-                        'btn-gradient': 'linear-gradient(273deg, #5060FF 13.62%, #8A94FF 111.34%)',
-                        'btn-gradient-hover': 'linear-gradient(0deg, rgba(0, 0, 0, 0.30) 0%, rgba(0, 0, 0, 0.30) 100%), linear-gradient(273deg, #5060FF 13.62%, #8A94FF 111.34%)',
-                    },
-
-                    boxShadow: {
-                        'primary': '0px 12px 20px rgba(80, 96, 255, 0.12)',
-                        'button': '0px 10px 40px rgba(80, 96, 255, 0.25)',
-                    }
-                }
-            }
-        }
+        document.getElementById('search-form').addEventListener('submit', function() {
+            var btn = document.getElementById('search-btn');
+            var btnText = document.getElementById('search-btn-text');
+            var btnLoading = document.getElementById('search-btn-loading');
+            btnText.classList.add('hidden');
+            btnLoading.classList.remove('hidden');
+            btn.disabled = true;
+        });
     </script>
-</head>
-<body class="bg-brand-gray-light font-poppins text-brand-gray-text antialiased">
-
-    <div class="min-h-screen w-full flex flex-col items-center py-8 sm:py-12 md:py-16 lg:py-20 xl:py-28 px-3 sm:px-4">
-    
-        <main class="w-full max-w-5xl flex flex-col items-center gap-6 sm:gap-8 md:gap-10">
-
-            <!-- Header -->
-            <header class="text-center flex flex-col items-center gap-1 sm:gap-2 max-w-xl px-2">
-                <a href="/" class="no-underline">
-                    <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
-                        <span class="text-brand-gray">Juris</span><span class="text-brand-blue">Topic</span>
-                    </h1>
-                </a>
-                <p class="text-sm sm:text-base md:text-lg text-brand-gray-text px-4">
-                    A Smarter Way to Explore Philippine Legal Topics
-                </p>
-            </header>
-
-            <!-- Search Card -->
-            <section class="w-full bg-white rounded-2xl border border-brand-gray-border shadow-primary p-6 sm:p-8 md:p-10 transition-all duration-200 focus-within:ring-2 focus-within:ring-[#8A94FF] focus-within:border-[#8A94FF]">
-                <form id="search-form" action="/search" method="post" class="flex flex-col gap-6">
-                    <label for="search-query" class="sr-only">Search Query</label>
-                    <textarea
-                        id="search-query"
-                        name="search_term"
-                        rows="4"
-                        placeholder="Enter a search phrase or keyword..."
-                        class="w-full p-4 rounded-xl text-base sm:text-lg bg-white placeholder:text-gray-400 focus:outline-none"
-                        required
-                    ></textarea>
-                    <div class="flex justify-center">
-                        <!-- Search Button -->
-                        <button type="submit" id="search-btn" class="w-full sm:w-auto text-white text-lg font-semibold bg-btn-gradient hover:bg-btn-gradient-hover rounded-xl shadow-button px-10 py-3 flex items-center justify-center gap-3 transition-all duration-300 relative min-w-[210px] min-h-[60px]">
-                            <span id="search-btn-text">Search Topics</span>
-                            <span id="search-btn-loading" class="hidden absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
-                                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
-                            </span>
-                        </button>
-                    </div>
-                </form>
-                <div id="results"></div>
-            </section>
-
-            <!-- "How it Works" Section -->
-            <section class="w-full bg-white rounded-xl sm:rounded-2xl shadow-primary border border-brand-gray-border p-4 sm:p-6 md:p-8 lg:p-10 flex flex-col gap-4 sm:gap-6">
-                <!-- Section Header -->
-                <div class="flex items-start sm:items-center gap-3 sm:gap-4">
-                    <!-- Icon -->
-                    <div class="flex-shrink-0 mt-0.5 sm:mt-0">
-                        <img src="src\doc_icon.svg" alt="How it works icon" class="h-6 w-6 sm:h-8 sm:w-8 md:h-9 md:w-9" />
-                    </div>
-                    <!-- Text Content -->
-                    <div>
-                        <h2 class="text-lg sm:text-md md:text-2xl font-semibold leading-tight">
-                            <span class="text-brand-gray">See How Juris</span><span class="text-brand-blue">Topic</span><span class="text-brand-gray"> Works</span>
-                        </h2>
-                        <p class="text-brand-gray-text text-sm sm:text-base mt-1">Explore our topic modeling visualization with sample legal data</p>
-                    </div>
-                </div>
-                
-                <!-- Visualization Container -->
-                <div class="w-full bg-brand-viz-bg rounded-lg border border-brand-viz-border overflow-hidden p-2 sm:p-4">
-                    <div class="overflow-x-auto">
-                        <iframe src="src/topic_hierarchy.html" class="w-full h-[600px] border-0 custom-scroll" scrolling="yes"></iframe>
-
-
-                    </div>
-                </div>
-                
-                <!-- Legend -->
-                <div class="flex flex-col sm:flex-row sm:justify-center items-start sm:items-center gap-x-8 md:gap-x-12 gap-y-3 sm:gap-y-4 pt-2 sm:pt-4 text-xs sm:text-sm text-brand-gray">
-                    <div class="flex items-center gap-2 sm:gap-3">
-                        <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-brand-gray rounded-full flex-shrink-0"></div>
-                        <span>Merged Topics</span>
-                    </div>
-                    <div class="flex items-center gap-2 sm:gap-3">
-                        <div class="w-8 sm:w-10 h-px bg-brand-gray flex-shrink-0"></div>
-                        <span>Hierarchical relationships</span>
-                    </div>
-                </div>
-            </section>
-
-        </main>
-    </div>
-
-</body>
-<script>
-    document.getElementById('search-form').addEventListener('submit', function() {
-        var btn = document.getElementById('search-btn');
-        var btnText = document.getElementById('search-btn-text');
-        var btnLoading = document.getElementById('search-btn-loading');
-        btnText.classList.add('hidden');
-        btnLoading.classList.remove('hidden');
-        btn.disabled = true;
-    });
-</script>
 </html>
