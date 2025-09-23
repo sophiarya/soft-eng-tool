@@ -39,6 +39,10 @@
     color: var(--brand-blue);
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     background-color: #F5F5FB;
     font-family: 'Poppins', sans-serif;
@@ -88,6 +92,10 @@ p {
     background-size: cover;
     background-position: center -150px;
     background-repeat: no-repeat;
+}
+
+.bottom-gradient {
+    background: red;
 }
 
 /* === Logo === */
@@ -651,6 +659,22 @@ details[open]>summary .chevron {
 
 .footer-action-btn:hover {
     background: var(--btn-gradient-hover);
+}
+
+.arrow-circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 28px;
+    height: 28px;
+    background: #ffffff;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.arrow-icon {
+    width: 16px;
+    height: 16px;
 }
 
 /* === Responsive Layout === */
