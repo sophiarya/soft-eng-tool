@@ -21,6 +21,19 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
+        <nav class="navbar">
+            <div class="navbar-left">
+                <img src="src/logo.svg" alt="JurisTopic Logo" class="navbar-logo">
+                <span class="navbar-title">
+                    <span class="juris">Juris</span>
+                    <span class="topic -ml-1">Topic</span>
+                </span>
+            </div>
+            <div class="navbar-links">
+                <a href="#hero" id="link-home" class="nav-link">Home</a>
+                <a href="#how-it-works" id="link-about" class="nav-link">About</a>
+            </div>
+        </nav>
         <div class="page-container">
             <div class="absolute inset-0 -z-10 bg-top-gradient"></div>
             <main class="main-container">
@@ -41,7 +54,6 @@
                             </p>
                         </div>
                     </header>
-                    <!-- Search Card -->
                     <div class="search-card">
                         <form 
                             id="search-form" 
@@ -76,16 +88,13 @@
                     </div>
                 </section>
                 <!-- === How it Wotks Section === -->
-                <section class="how-it-works">
-                    <!-- Section Title -->
+                <section class="how-it-works" id="how-it-works">
                     <div class="hiw-header">
                         <h2 class="hiw-title">Find Cases in Just a Few Clicks</h2>
                         <p class="hiw-subtitle">
                             Search Supreme Court cases and discover related topics quickly
                         </p>
                     </div>
-                
-                    <!-- 3 Cards -->
                     <div class="hiw-cards">
                         <div class="hiw-card">
                             <div class="card-img" style="background-image:url('/src/step1.svg');"></div>
@@ -95,7 +104,6 @@
                                 legal topic, or key term you want to explore.
                             </p>
                         </div>
-                
                         <div class="hiw-card">
                             <div class="card-img" style="background-image:url('/src/step2.svg');"></div>
                             <h3 class="card-title">Click “Search Topics”</h3>
@@ -104,7 +112,6 @@
                                 analyze thousands of decisions in seconds.
                             </p>
                         </div>
-                
                         <div class="hiw-card">
                             <div class="card-img" style="background-image:url('/src/step3.svg');"></div>
                             <h3 class="card-title">Get Organized Topics</h3>
@@ -138,7 +145,6 @@
                             </p>
                         </div>
                     </div>
-                    <!-- Visualization Container -->
                     <div class="dendogram-container">
                         <iframe 
                             src="src/topic_hierarchy.html" 
@@ -146,7 +152,6 @@
                             scrolling="yes"
                         ></iframe>
                     </div>               
-                    <!-- Legend -->
                     <div class="legend-container">
                         <div class="legend-item">
                             <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-brand-gray rounded-full flex-shrink-0"></div>
@@ -161,7 +166,6 @@
                 <!-- === Call to Action Section === -->
                 <section id="cta-section" class="hero-section">
                     <div class="site-header">
-                        <!-- Logo -->
                         <div class="logo-container"></div>
                         <div class="title-container">
                             <h1 class="header-title">
@@ -186,8 +190,55 @@
                 </section>
             </main>
         </div>
+        <footer class="footer">
+            <div class="footer-top">
+                <div class="footer-left">
+                    <div class="footer-logo">
+                        <img src="src/logo.svg" alt="JurisTopic Logo" class="footer-logo-img">
+                        <span class="footer-logo-text">
+                            <span class="juris">Juris</span>
+                            <span class="topic -ml-1">Topic</span>
+                        </span>
+                    </div>
+                    <p class="footer-description">
+                        A Smarter Way to Explore <br>
+                        Philippine Legal Topics
+                    </p>
+                </div>
+                <div class="footer-links">
+                    <h2 class="footer-links-title">JurisTopic</h2>
+                    <div class="footer-link-list">
+                        <a href="#hero" class="footer-link">Home</a>
+                        <a href="#how-it-works" class="footer-link">About</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                © 2025 JurisTopic. All rights reserved.
+            </div>
+        </footer>
     </body>
     <script>
+        const sections = document.querySelectorAll("section[id]");
+        const navLinks = document.querySelectorAll(".nav-link");
+
+        function activateLink() {
+        let scrollPos = window.scrollY + 80; // offset for navbar height
+        sections.forEach(section => {
+            if (
+            scrollPos >= section.offsetTop &&
+            scrollPos < section.offsetTop + section.offsetHeight
+            ) {
+            navLinks.forEach(link => link.classList.remove("active"));
+            document
+                .querySelector(`.nav-link[href="#${section.id}"]`)
+                ?.classList.add("active");
+            }
+        });
+        }
+        window.addEventListener("scroll", activateLink);
+
         document.getElementById('search-form').addEventListener('submit', function() {
             var btn = document.getElementById('search-btn');
             var btnText = document.getElementById('search-btn-text');
