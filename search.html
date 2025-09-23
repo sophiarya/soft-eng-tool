@@ -22,50 +22,56 @@
     </head>
     <body>
         <div class="page-container">
+            <div class="absolute inset-0 -z-10 bg-top-gradient"></div>
             <main class="main-container">
-                <header class="site-header">
-                    <a href="search.html" class="site-logo-link">
-                        <h1 class="site-logo">
-                            <span class="secondary-color">Juris</span>
-                            <span class="primary-color -ml-3">Topic</span>
-                        </h1>
-                    </a>
-                    <p class="text-sm sm:text-base mt-1">
-                        A Smarter Way to Explore Philippine Legal Topics
-                    </p>
-                </header>
-                <!-- Search Card -->
-                <section class="search-card">
-                    <form 
-                        id="search-form" 
-                        action="/search" 
-                        method="post"
-                    >
-                        <label for="search-query" class="sr-only">
-                            Search Query
-                        </label>
-                        <textarea 
-                            id="search-query" 
-                            name="search_term" 
-                            rows="4" 
-                            placeholder="Enter a search phrase or keyword..."
-                            required
-                            class="text-sm sm:text-base md:text-lg"
-                        ></textarea>
-                        <div class="button-container">
-                            <button type="submit" id="search-btn">
-                                <span 
-                                    id="search-btn-text" 
-                                    class="text-sm sm:text-base md:text-lg"
-                                >
-                                    Search Topics
-                                </span>
-                                <span id="search-btn-loading" class="hidden">
-                                    <div class="spinner"></div>
-                                </span>
-                            </button>
+                <section id="hero" class="hero-section">
+                    <header class="site-header">
+                        <div class="logo-container"></div>
+                        <div class="title-container">
+                            <h1 class="header-title">
+                                Smarter Topic Discovery
+                                <br>
+                                <span class="header-highlight">for Philippine Legal Research</span>
+                            </h1>
+                            <p class="header-description">
+                                Navigate thousands of Supreme Court decisions with ease, uncovering
+                                connections and organizing cases for faster, more meaningful research.
+                            </p>
                         </div>
-                    </form>
+                    </header>
+                    <!-- Search Card -->
+                    <div class="search-card">
+                        <form 
+                            id="search-form" 
+                            action="/search" 
+                            method="post"
+                        >
+                            <label for="search-query" class="sr-only">
+                                Search Query
+                            </label>
+                            <textarea 
+                                id="search-query" 
+                                name="search_term" 
+                                rows="4" 
+                                placeholder="Enter a search phrase or keyword..."
+                                required
+                                class="text-sm sm:text-base md:text-lg"
+                            ></textarea>
+                            <div class="button-container">
+                                <button type="submit" id="search-btn">
+                                    <span 
+                                        id="search-btn-text" 
+                                        class="text-sm sm:text-base md:text-lg"
+                                    >
+                                        Search Topics
+                                    </span>
+                                    <span id="search-btn-loading" class="hidden">
+                                        <div class="spinner"></div>
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </section>
                 <!-- Dendogram Section -->
                 <section class="dendogram-section">

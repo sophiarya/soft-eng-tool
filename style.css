@@ -68,33 +68,79 @@ p {
     gap: 1.5rem;
 }
 
+.hero-section {
+    width: 100%;
+    min-height: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.bg-top-gradient {
+    background-image:
+        linear-gradient(to bottom,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(0, 0, 0, 0) 100%),
+        url('/src/background.svg');
+    background-size: cover;
+    background-position: center -150px;
+    background-repeat: no-repeat;
+}
+
 /* === Logo === */
 .site-header {
-    text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.25rem;
-    max-width: 36rem;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    gap: 30px;             
+    align-self: stretch;    
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 3rem;
 }
 
-.site-logo-link {
-    text-decoration: none;
+/* === Logo === */
+.logo-container {
+    width: 40px;
+    height: 40px;
+    background-image: url("/src/logo.svg");
+    box-shadow: var(--shadow-primary);
+    background-size: contain;              
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
-.site-logo {
-    font-weight: 700;
-    line-height: 1.2;
-    font-size: 1.5rem;
+/* === Title === */
+.title-container {
+    gap: 1rem;
 }
 
-.site-tagline {
-    font-size: 0.875rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    margin-top: 0.25rem;
+.header-title {
+    color: var(--Grayscale-Dark, #3B3B3B);
+    font-family: 'Geist', sans-serif;
+    font-size: 36px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 115%;
+    letter-spacing: -2px;
+    margin: 0 0 1rem 0;
+}
+
+.header-highlight {
+    color: var(--primary-500-base, #5060FF);
+}
+
+.header-description {
+    color: var(--Grayscale-Dark, #3B3B3B);
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.6;
+    max-width: 720px;
+    margin: 0 auto;
 }
 
 /* === Search Page === */
@@ -278,11 +324,16 @@ p {
     }
 
     .site-header {
-        gap: 0.5rem;
+        gap: 40px;
     }
 
     .site-logo { 
         font-size: 1.875rem;
+    }
+
+    .logo-container {
+        width: 50px;
+        height: 50px;
     }
 
     .main-container {
@@ -319,8 +370,23 @@ p {
         font-size: 2.25rem; 
     }
 
+    .logo-container {
+        width: 60px;
+        height: 60px;
+    }
+
+    .header-title {
+        font-size: 64px;      
+        letter-spacing: -2px;
+    }
+
+    .header-description {
+        font-size: 18px;
+        max-width: 720px;
+    }
+
     .main-container {
-        gap: 2.5rem;
+        gap: 5rem;
     }
 
     .search-card {
