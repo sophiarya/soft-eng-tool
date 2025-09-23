@@ -14,11 +14,11 @@
         <!-- Tailwind CSS -->
         <script src="https://cdn.tailwindcss.com"></script>
 
-        <!-- Tailwind Configuration -->
-        <script src="tailwind-config.js"></script>
+    <!-- Tailwind Configuration -->
+    <script src="/static/tailwind-config.js"></script>
 
-        <!-- Custom CSS -->
-        <link rel="stylesheet" href="style.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/style.css">
     </head>
     <body>
         <nav class="navbar">
@@ -239,13 +239,28 @@
         }
         window.addEventListener("scroll", activateLink);
 
-        document.getElementById('search-form').addEventListener('submit', function() {
+        document.getElementById('search-form').addEventListener('submit', function(e) {
+            // Prevent the immediate navigation so the browser can repaint and show the
+            // loading spinner. Then submit the form programmatically shortly after.
+            e.preventDefault();
+
+            var form = this;
             var btn = document.getElementById('search-btn');
             var btnText = document.getElementById('search-btn-text');
             var btnLoading = document.getElementById('search-btn-loading');
+
+            // Hide the text and show the spinner
             btnText.classList.add('hidden');
             btnLoading.classList.remove('hidden');
+            btnLoading.classList.add('active');
             btn.disabled = true;
+
+            // Allow the browser to repaint so the spinner becomes visible before navigation
+            requestAnimationFrame(function() {
+                setTimeout(function() {
+                    form.submit();
+                }, 50);
+            });
         });
     </script>
 </html>

@@ -9,7 +9,11 @@ import pprint
 
 app = FastAPI()
 
+# serve files in the `src` folder (images, topic_hierarchy.html, etc.)
 app.mount("/src", StaticFiles(directory="src"), name="src")
+
+# point at project root for static files
+app.mount("/static", StaticFiles(directory="."), name="static")
 
 # Set up Jinja2 templates (using current directory for HTML files)
 templates = Jinja2Templates(directory=".")
