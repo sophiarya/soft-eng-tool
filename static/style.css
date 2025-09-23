@@ -49,10 +49,10 @@ p {
     font: var(--brand-gray-text);
 }
 
-.primary-color {color: var(--brand-blue);}
-.secondary-color {color: var(--brand-gray);}
-.juris {color: var(--brand-gray);}
-.topic {color: var(--brand-blue);}
+.primary-color {color: var(--brand-blue);} 
+.secondary-color {color: var(--brand-gray);} 
+.juris {color: var(--brand-gray);} 
+.topic {color: var(--brand-blue);} 
 
 /* =========================================================
    LAYOUT CONTAINERS
@@ -309,10 +309,6 @@ p {
     100% {
         transform: rotate(360deg);
     }
-}
-
-#search-btn-loading.active {
-    display: inline-block;
 }
 
 /* =========================================================
@@ -922,3 +918,4 @@ details[open]>summary .chevron {
         padding: 2.5rem;
     }
 }
+
