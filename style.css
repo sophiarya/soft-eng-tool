@@ -65,7 +65,7 @@ p {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    gap: 4rem;
 }
 
 .hero-section {
@@ -259,6 +259,133 @@ p {
     display: inline-block;
 }
 
+/* === How It Works Section === */
+.how-it-works {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 3rem 0; 
+}
+
+/* Header */
+.hiw-header {
+    text-align: center;
+    max-width: 465px;
+}
+
+.hiw-title {
+    color: var(--Grayscale-Dark, #3B3B3B);
+    font-family: 'Poppins', sans-serif;
+    font-size: 28px;
+    /* ⬅ default smaller */
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 1rem;
+}
+
+.hiw-subtitle {
+    color: var(--Grayscale-Grey-1, #626262);
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    /* ⬅ default smaller */
+    font-weight: 400;
+    line-height: 22px;
+    margin: 0;
+}
+
+/* Cards container */
+.hiw-cards {
+    display: grid;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+    grid-template-columns: 1fr;
+    /* Mobile default */
+}
+
+/* Card */
+.hiw-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 18px 48px 18px;
+    /* ⬅ tighter padding */
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.05);
+    text-align: center;
+}
+
+.card-img {
+    width: 150px;
+    /* ⬅ smaller default */
+    height: 150px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin-bottom: 1.25rem;
+}
+
+.card-title {
+    color: var(--Grayscale-Dark, #3B3B3B);
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    /* ⬅ smaller default */
+    font-weight: 600;
+    line-height: 28px;
+    margin: 0 0 0.5rem;
+}
+
+.card-desc {
+    color: var(--Grayscale-Grey-1, #626262);
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    /* ⬅ smaller default */
+    font-weight: 400;
+    line-height: 22px;
+    margin: 0;
+    max-width: 260px;
+}
+
+/* === Responsive Breakpoints === */
+
+/* ≥ 640px (small tablets) */
+@media (min-width: 640px) {
+    .card-img {
+        width: 160px;
+        height: 160px;
+    }
+}
+
+/* ≥ 768px (tablets) */
+@media (min-width: 768px) {
+    .hiw-title {
+            font-size: 42px;
+            line-height: 48px;
+        }
+    
+        .hiw-subtitle {
+            font-size: 16px;
+        }
+    
+        .hiw-cards {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    
+        .hiw-card {
+            padding: 32px 20px 56px;
+        }
+    
+        .card-img {
+            width: 180px;
+            height: 180px;
+        }
+}
+
 /* === Dendogram Section === */
 .dendogram-section {
     width: 100%;
@@ -337,7 +464,7 @@ p {
     }
 
     .main-container {
-        gap: 2rem;        
+        gap: 5rem;        
     }
 
     .search-card {
@@ -386,7 +513,7 @@ p {
     }
 
     .main-container {
-        gap: 5rem;
+        gap: 6rem;
     }
 
     .search-card {
