@@ -21,20 +21,21 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <div class="page-container">
-            <main class="main-container">
-                <header class="site-header">
-                    <a href="search.html" class="site-logo-link">
-                        <h1 class="site-logo">
-                            <span class="secondary-color">Juris</span>
-                            <span class="primary-color -ml-3">Topic</span>
-                        </h1>
-                    </a>
-                    <p class="text-sm sm:text-base mt-1">
-                        A Smarter Way to Explore Philippine Legal Topics
-                    </p>
-                </header>
-                <!-- Topic Hierarchy Card -->
+        <nav class="navbar">
+            <div class="navbar-left">
+                <img src="src/logo.svg" alt="JurisTopic Logo" class="navbar-logo">
+                <span class="navbar-title">
+                    <span class="juris">Juris</span>
+                    <span class="topic -ml-1">Topic</span>
+                </span>
+            </div>
+            <div class="navbar-links">
+                <a href="/#hero" id="link-home" class="nav-link">Home</a>
+                <a href="/#how-it-works" id="link-about" class="nav-link">About</a>
+            </div>
+        </nav>
+        <div class="page-container mt-12">
+            <main class="main-container gap-12">
                 <section class="topic-hierarchy-card">
                     <h2 class="secondary-color text-lg sm:text-xl md:text-2xl font-semibold">
                         Topic Hierarchy
@@ -68,7 +69,6 @@
                                         </span>
                                     </div>
                                 </summary>
-                                <!-- Keywords for Closest Topic -->
                                 <div class="topwords-container">
                                     {% for word in top_words %}
                                     <span class="topwords">
@@ -80,7 +80,7 @@
                         </div>
                     </div>
                 </section>
-                <!-- Relevant Documents Card -->
+                <!-- === Relevant Documents Card === -->
                 <section id="relevant-docs" class="relevant-docs-card" data-show="">
                     <h2 class="text-2xl font-semibold text-brand-gray">
                         Relevant Documents for 
@@ -105,8 +105,7 @@
                         </div>
                     </div>
                 </section>
-                <!--Start a New Search Button-->
-                <footer class="mt-2 sm:mt-4">
+                <div class="mt-2 sm:mt-4">
                     <a 
                         href="/" 
                         class="footer-action-btn"
@@ -125,38 +124,66 @@
                         </svg>
                         Start a New Search
                     </a>
-                </footer>
+                </div>
             </main>
         </div>
-        <script>
-            const summaries = document.querySelectorAll('summary');
-            const docsSection = document.getElementById('relevant-docs');
-            const topicLabel = docsSection.querySelector('span.text-brand-blue');
-
-            summaries.forEach(summary => {
-                summary.addEventListener('click', (e) => {
-                    const isChevron = e.target.closest('.chevron');
-
-                    if (!isChevron) {
-                        e.preventDefault(); 
-        
-                        const topicSpan = summary.querySelector('.topic-title');
-                        if (topicSpan) {
-                            const selectedTopic = topicSpan.dataset.topic;
-                            topicLabel.textContent = selectedTopic;
-                            docsSection.classList.remove('hidden');
-                            docsSection.scrollIntoView({ behavior: 'smooth' });
-                        }
-                    }
-                });
-                const summaries = document.querySelectorAll('summary');
-                summary.addEventListener('click', (e) => {
-                    const isChevron = e.target.closest('.chevron');
-                    if (!isChevron) {
-                        e.preventDefault();
-                    }
-                });
-            });
-        </script>
+        <footer class="footer">
+            <div class="footer-top">
+                <div class="footer-left">
+                    <div class="footer-logo">
+                        <img src="src/logo.svg" alt="JurisTopic Logo" class="footer-logo-img">
+                        <span class="footer-logo-text">
+                            <span class="juris">Juris</span>
+                            <span class="topic -ml-1">Topic</span>
+                        </span>
+                    </div>
+                    <p class="footer-description">
+                        A Smarter Way to Explore <br>
+                        Philippine Legal Topics
+                    </p>
+                </div>
+                <div class="footer-links">
+                    <h2 class="footer-links-title">JurisTopic</h2>
+                    <div class="footer-link-list">
+                        <a href="/#hero" class="footer-link">Home</a>
+                        <a href="/#how-it-works" class="footer-link">About</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="footer-bottom">
+                © 2025 JurisTopic. All rights reserved.
+            </div>
+        </footer>
     </body>
+    <script>
+        const summaries = document.querySelectorAll('summary');
+        const docsSection = document.getElementById('relevant-docs');
+        const topicLabel = docsSection.querySelector('span.text-brand-blue');
+
+        summaries.forEach(summary => {
+            summary.addEventListener('click', (e) => {
+                const isChevron = e.target.closest('.chevron');
+
+                if (!isChevron) {
+                    e.preventDefault(); 
+    
+                    const topicSpan = summary.querySelector('.topic-title');
+                    if (topicSpan) {
+                        const selectedTopic = topicSpan.dataset.topic;
+                        topicLabel.textContent = selectedTopic;
+                        docsSection.classList.remove('hidden');
+                        docsSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+            const summaries = document.querySelectorAll('summary');
+            summary.addEventListener('click', (e) => {
+                const isChevron = e.target.closest('.chevron');
+                if (!isChevron) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
 </html>
