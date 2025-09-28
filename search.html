@@ -125,31 +125,51 @@
                 <!-- === Dendogram Section === -->
                 <section class="dendogram-section">
                     <div class="dendogram-header">
-                        <div class="flex-shrink-0 mt-0.5 sm:mt-0">
-                            <img 
-                                src="src\doc_icon.svg" 
-                                alt="How it works icon" 
-                                class="h-6 w-6 sm:h-8 sm:w-8 md:h-9 md:w-9" 
-                            />
+                        <div class="dendogram-header-content">
+                            <div class="flex-shrink-0 mt-0.5 sm:mt-0">
+                                <img 
+                                    src="src\doc_icon.svg" 
+                                    alt="How it works icon" 
+                                    class="h-6 w-6 sm:h-8 sm:w-8 md:h-9 md:w-9" 
+                                />
+                            </div>
+                            <div class="dendogram-header-text">
+                                <h2 class="text-lg sm:text-md md:text-2xl font-semibold leading-tight">
+                                    <span class="secondary-color">
+                                        See How Juris
+                                        <span class="primary-color -ml-1">Topic</span> 
+                                        Works
+                                    </span>
+                                </h2>
+                                <p class="text-sm sm:text-base">
+                                    Explore our topic modeling visualization with sample legal data
+                                </p>
+                            </div>
                         </div>
-                        <div>
-                            <h2 class="text-lg sm:text-md md:text-2xl font-semibold leading-tight">
-                                <span class="secondary-color">
-                                    See How Juris
-                                    <span class="primary-color -ml-1">Topic</span> 
-                                    Works
-                                </span>
-                            </h2>
-                            <p class="text-sm sm:text-base mt-1">
-                                Explore our topic modeling visualization with sample legal data
-                            </p>
-                        </div>
+                        <button 
+                            type="button" 
+                            class="fullscreen-toggle-btn" 
+                            id="topic-fullscreen-toggle" 
+                            aria-pressed="false"
+                        >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill-="currentColor" viewBox="0 0 24 24" fill="none">
+                                    <path d="M4 2C2.89543 2 2 2.89543 2 4V8C2 8.55228 2.44772 9 3 9C3.55228 9 4 8.55228 4 8V4H8C8.55228 4 9 3.55228 9 3C9 2.44772 8.55228 2 8 2H4Z" fill="#FFFFFF"/>
+                                    <path d="M20 2C21.1046 2 22 2.89543 22 4V8C22 8.55228 21.5523 9 21 9C20.4477 9 20 8.55228 20 8V4H16C15.4477 4 15 3.55228 15 3C15 2.44772 15.4477 2 16 2H20Z" fill="#FFFFFF"/>
+                                    <path d="M20 22C21.1046 22 22 21.1046 22 20V16C22 15.4477 21.5523 15 21 15C20.4477 15 20 15.4477 20 16V20H16C15.4477 20 15 20.4477 15 21C15 21.5523 15.4477 22 16 22H20Z" fill="#FFFFFF"/>
+                                    <path d="M2 20C2 21.1046 2.89543 22 4 22H8C8.55228 22 9 21.5523 9 21C9 20.4477 8.55228 20 8 20H4V16C4 15.4477 3.55228 15 3 15C2.44772 15 2 15.4477 2 16V20Z" fill="#FFFFFF"/>
+                                </svg>
+
+                            <span>Full Screen</span>
+                        </button>
                     </div>
                     <div class="dendogram-container">
                         <iframe 
+                            id="topic-hierarchy-iframe"
                             src="src/topic_hierarchy.html" 
                             class="w-full h-[600px] border-0 custom-scroll" 
                             scrolling="yes"
+                            allow="fullscreen"
+                            allowfullscreen
                         ></iframe>
                     </div>               
                     <div class="legend-container">
@@ -224,20 +244,214 @@
         const navLinks = document.querySelectorAll(".nav-link");
 
         function activateLink() {
-        let scrollPos = window.scrollY + 80; // offset for navbar height
-        sections.forEach(section => {
-            if (
-            scrollPos >= section.offsetTop &&
-            scrollPos < section.offsetTop + section.offsetHeight
-            ) {
-            navLinks.forEach(link => link.classList.remove("active"));
-            document
-                .querySelector(`.nav-link[href="#${section.id}"]`)
-                ?.classList.add("active");
-            }
-        });
+            let scrollPos = window.scrollY + 80; // offset for navbar height
+            sections.forEach(section => {
+                if (
+                    scrollPos >= section.offsetTop &&
+                    scrollPos < section.offsetTop + section.offsetHeight
+                ) {
+                    navLinks.forEach(link => link.classList.remove("active"));
+                    document
+                        .querySelector(`.nav-link[href="#${section.id}"]`)
+                        ?.classList.add("active");
+                }
+            });
         }
         window.addEventListener("scroll", activateLink);
+
+        const topicIframe = document.getElementById('topic-hierarchy-iframe');
+        const fullscreenToggleBtn = document.getElementById('topic-fullscreen-toggle');
+        const TOPIC_IFRAME_SCROLL_Y = 107; // Change this to adjust the vertical offset inside the iframe (px)
+        const TOPIC_IFRAME_SCROLL_X = 110; // Change this to adjust the horizontal offset inside the iframe (px)
+        let topicIframeScrollApplied = false;
+
+        const brandVizBackground = () => {
+            const computed = getComputedStyle(document.documentElement).getPropertyValue('--brand-viz-bg');
+            return computed && computed.trim().length ? computed.trim() : '#f5f5fb';
+        };
+
+        function getActiveFullscreenElement() {
+            return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+        }
+
+        const getTopicPlotContext = () => {
+            if (!topicIframe) {
+                return null;
+            }
+            try {
+                const frameWindow = topicIframe.contentWindow;
+                if (!frameWindow) {
+                    return null;
+                }
+                const frameDoc = frameWindow.document;
+                if (!frameDoc) {
+                    return null;
+                }
+                const plotDiv = frameDoc.querySelector('.plotly-graph-div');
+                return { frameWindow, frameDoc, plotDiv };
+            } catch (error) {
+                return null;
+            }
+        };
+
+        const scrollTopicIframe = () => {
+            if (topicIframeScrollApplied || (TOPIC_IFRAME_SCROLL_Y <= 0 && TOPIC_IFRAME_SCROLL_X <= 0)) {
+                return;
+            }
+
+            const context = getTopicPlotContext();
+            if (!context) {
+                return;
+            }
+
+            const { frameWindow } = context;
+            if (!frameWindow) {
+                return;
+            }
+
+            try {
+                frameWindow.scrollTo({
+                    top: Math.max(TOPIC_IFRAME_SCROLL_Y, 0),
+                    left: Math.max(TOPIC_IFRAME_SCROLL_X, 0),
+                    behavior: 'auto'
+                });
+                topicIframeScrollApplied = true;
+            } catch (error) {
+                // Ignore scroll failures caused by browser restrictions
+            }
+        };
+
+        const applyTopicBranding = () => {
+            const context = getTopicPlotContext();
+            if (!context) {
+                return;
+            }
+
+            const { frameDoc, plotDiv } = context;
+            const background = brandVizBackground();
+
+            try {
+                frameDoc.documentElement.style.background = background;
+                frameDoc.body.style.background = background;
+            } catch (error) {
+                // Ignore styling issues if browser blocks access
+            }
+
+            const mainSvg = frameDoc.querySelector('.main-svg');
+            if (mainSvg) {
+                mainSvg.style.background = background;
+            }
+
+            if (plotDiv) {
+                plotDiv.style.width = '100%';
+                plotDiv.style.maxWidth = 'none';
+            }
+        };
+
+        const ensureTopicPlotHeight = () => {
+            const context = getTopicPlotContext();
+            if (!context) {
+                return;
+            }
+
+            const { plotDiv } = context;
+            if (!plotDiv) {
+                return;
+            }
+
+            const iframeHeight = topicIframe ? topicIframe.clientHeight : 0;
+            const targetHeight = Math.max(iframeHeight, 600);
+            plotDiv.style.height = `${targetHeight}px`;
+            plotDiv.style.minHeight = '600px';
+        };
+
+        const resizeTopicPlot = () => {
+            const context = getTopicPlotContext();
+            if (!context) {
+                return;
+            }
+
+            const { frameWindow, plotDiv } = context;
+            if (!plotDiv || !frameWindow.Plotly || !frameWindow.Plotly.Plots) {
+                return;
+            }
+
+            try {
+                frameWindow.Plotly.Plots.resize(plotDiv);
+            } catch (error) {
+                // Ignore resize issues caused by browsers blocking cross-document access
+            }
+        };
+
+        const scheduleTopicResize = () => {
+            applyTopicBranding();
+            ensureTopicPlotHeight();
+            scrollTopicIframe();
+            if (typeof requestAnimationFrame === 'function') {
+                requestAnimationFrame(() => resizeTopicPlot());
+            } else {
+                setTimeout(resizeTopicPlot, 50);
+            }
+        };
+
+        if (topicIframe) {
+            topicIframe.addEventListener('load', () => {
+                scheduleTopicResize();
+            });
+        }
+
+        window.addEventListener('resize', scheduleTopicResize);
+
+        const updateFullscreenState = (isFullscreen) => {
+            if (!fullscreenToggleBtn) {
+                return;
+            }
+            const label = fullscreenToggleBtn.querySelector('span');
+            if (label) {
+                label.textContent = isFullscreen ? 'Exit Full Screen' : 'Full Screen';
+            }
+            fullscreenToggleBtn.setAttribute('aria-pressed', String(isFullscreen));
+        };
+
+        if (topicIframe && fullscreenToggleBtn) {
+            const requestFullscreen = topicIframe.requestFullscreen || topicIframe.webkitRequestFullscreen || topicIframe.msRequestFullscreen;
+            const exitFullscreen = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+
+            if (requestFullscreen && exitFullscreen) {
+                fullscreenToggleBtn.addEventListener('click', () => {
+                    const isFullscreen = getActiveFullscreenElement() === topicIframe;
+                    if (!isFullscreen) {
+                        const result = requestFullscreen.call(topicIframe);
+                        if (result && typeof result.catch === 'function') {
+                            result.catch(() => {
+                                /* Ignore request failure, browser will handle messaging */
+                            });
+                        }
+                        scheduleTopicResize();
+                    } else {
+                        const result = exitFullscreen.call(document);
+                        if (result && typeof result.catch === 'function') {
+                            result.catch(() => {
+                                /* Ignore exit failure */
+                            });
+                        }
+                        scheduleTopicResize();
+                    }
+                });
+
+                ['fullscreenchange', 'webkitfullscreenchange', 'msfullscreenchange'].forEach(eventName => {
+                    document.addEventListener(eventName, () => {
+                        updateFullscreenState(getActiveFullscreenElement() === topicIframe);
+                        scheduleTopicResize();
+                    });
+                });
+
+                updateFullscreenState(false);
+            } else {
+                fullscreenToggleBtn.disabled = true;
+                fullscreenToggleBtn.setAttribute('aria-disabled', 'true');
+            }
+        }
 
         document.getElementById('search-form').addEventListener('submit', function(e) {
             // Prevent the immediate navigation so the browser can repaint and show the
