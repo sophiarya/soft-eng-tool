@@ -4,6 +4,20 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>JurisTopic - Search</title>
+        <meta name="description" content="Discover Philippine Supreme Court topic hierarchies quickly with JurisTopic's structured search." />
+        <link rel="canonical" href="{{ request.url_for('read_root') }}" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="JurisTopic – Smarter Topic Discovery" />
+        <meta property="og:description" content="Navigate Philippine Supreme Court decisions through layered topic hierarchies and relevant cases." />
+        <meta property="og:url" content="{{ request.url_for('read_root') }}" />
+        <meta property="og:image" content="{{ request.url_for('static', path='embed_image_og.png') }}" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="JurisTopic – Smarter Topic Discovery" />
+        <meta name="twitter:description" content="Navigate Philippine Supreme Court decisions through layered topic hierarchies and relevant cases." />
+        <meta name="twitter:image" content="{{ request.url_for('static', path='embed_image_og.png') }}" />
         <!-- Tailwind CSS CDN -->
         <script src="https://cdn.tailwindcss.com"></script>
         <!-- Google Fonts: Poppins -->

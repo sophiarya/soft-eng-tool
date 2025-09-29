@@ -3,7 +3,21 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>JurisTopic - Search</title>
+        <title>JurisTopic - Search Results</title>
+        <meta name="description" content="Topic hierarchy results for {{ selected_topic_name or 'your search' }} from JurisTopic." />
+        <link rel="canonical" href="{{ request.url }}" />
+        <meta property="og:type" content="article" />
+        <meta property="og:title" content="JurisTopic – {{ selected_topic_name or 'Topic Results' }}" />
+        <meta property="og:description" content="Explore hierarchical connections between Supreme Court topics and documents based on {{ selected_topic_name or 'your search' }}." />
+        <meta property="og:url" content="{{ request.url }}" />
+        <meta property="og:image" content="{{ request.url_for('static', path='embed_image_og.png') }}" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="JurisTopic – {{ selected_topic_name or 'Topic Results' }}" />
+        <meta name="twitter:description" content="Explore hierarchical connections between Supreme Court topics and documents based on {{ selected_topic_name or 'your search' }}." />
+        <meta name="twitter:image" content="{{ request.url_for('static', path='embed_image_og.png') }}" />
         <!-- Tailwind CSS CDN -->
         <script src="https://cdn.tailwindcss.com"></script>
         <!-- Google Fonts: Poppins -->
