@@ -242,6 +242,67 @@
     <script>
         const sections = document.querySelectorAll("section[id]");
         const navLinks = document.querySelectorAll(".nav-link");
+        const searchField = document.getElementById('search-query');
+        const WARMUP_ENDPOINT = '/search/warmup';
+        const footerCta = document.querySelector('.footer-action-btn[href="#hero"]');
+
+        const warmSearchApi = async (trigger) => {
+            try {
+                await fetch(WARMUP_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ trigger })
+                });
+            } catch (error) {
+                /* Ignore warmup errors; primary search flow should continue */
+            }
+        };
+
+        if (searchField) {
+            let lastWarmEvent = '';
+            let lastWarmTime = 0;
+
+            const getNow = () => {
+                if (typeof performance !== 'undefined' && performance.now) {
+                    return performance.now();
+                }
+                return Date.now();
+            };
+
+            const handleWarmTrigger = (event) => {
+                const now = getNow();
+                if (
+                    event.type === 'click' &&
+                    lastWarmEvent === 'focus' &&
+                    now - lastWarmTime < 50
+                ) {
+                    lastWarmEvent = 'click';
+                    lastWarmTime = now;
+                    return;
+                }
+                lastWarmEvent = event.type;
+                lastWarmTime = now;
+                warmSearchApi(event.type);
+            };
+
+            ['focus', 'click'].forEach((eventName) => {
+                searchField.addEventListener(eventName, handleWarmTrigger);
+            });
+        }
+
+        if (footerCta && searchField) {
+            footerCta.addEventListener('click', () => {
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        try {
+                            searchField.focus({ preventScroll: true });
+                        } catch (error) {
+                            searchField.focus();
+                        }
+                    }, 150);
+                });
+            });
+        }
 
         function activateLink() {
             let scrollPos = window.scrollY + 80; // offset for navbar height

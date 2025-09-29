@@ -40,69 +40,132 @@
                     <h2 class="secondary-color text-lg sm:text-xl md:text-2xl font-semibold">
                         Topic Hierarchy
                     </h2>
-                    <div class="topic-hierarchy-container">
-                        <div class="topic-details-wrapper">
-                            <details open class="group">
-                                <summary class="topic-summary">
-                                    <div class="flex items-center gap-3">
-                                        <svg 
-                                            xmlns="http://www.w3.org/2000/svg" 
-                                            class="chevron h-5 w-5 text-brand-gray-text transition-transform duration-200" 
-                                            viewBox="0 0 20 20" fill="currentColor"
-                                        >
-                                            <path 
-                                                fill-rule="evenodd" 
-                                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" 
-                                                clip-rule="evenodd" 
-                                            />
-                                        </svg>
-                                        <img 
-                                            src="src/doc_icon.svg" 
-                                            alt="How it works icon" 
-                                            class="h-6 w-6" 
+                    {% macro render_node(node, open_ids) %}
+                    <div class="topic-details-wrapper" data-topic-id="{{ node.id }}">
+                        <details class="group" data-topic-id="{{ node.id }}" {% if node.id in open_ids %}open{% endif %}>
+                            <summary class="topic-summary" data-topic-id="{{ node.id }}">
+                                <div class="flex items-center gap-3">
+                                    <svg 
+                                        xmlns="http://www.w3.org/2000/svg" 
+                                        class="chevron h-5 w-5 text-brand-gray-text transition-transform duration-200" 
+                                        viewBox="0 0 20 20" fill="currentColor"
+                                    >
+                                        <path 
+                                            fill-rule="evenodd" 
+                                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" 
+                                            clip-rule="evenodd" 
                                         />
-                                        <span 
-                                            class="topic-title text-lg font-semibold text-brand-gray" 
-                                            data-topic="{{topic_name}}"
-                                        >
-                                            {{topic_name}}
-                                        </span>
-                                    </div>
-                                </summary>
-                                <div class="topwords-container">
-                                    {% for word in top_words %}
+                                    </svg>
+                                    <img 
+                                        src="src/doc_icon.svg" 
+                                        alt="Topic icon" 
+                                        class="h-6 w-6" 
+                                    />
+                                    <span 
+                                        class="topic-title text-lg font-semibold text-brand-gray" 
+                                        data-topic-id="{{ node.id }}" 
+                                        data-topic-name="{{ node.name }}"
+                                    >
+                                        {{ node.name }}
+                                    </span>
+                                    {% if node.is_closest %}
+                                    <span class="ml-2 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold uppercase tracking-wide">
+                                        Closest Match
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </summary>
+                            <div class="topwords-container">
+                                {% if node.top_words %}
+                                    {% for word in node.top_words[:6] %}
                                     <span class="topwords">
                                         {{ word }}
                                     </span>
                                     {% endfor %}
-                                </div>
-                            </details>
-                        </div>
+                                {% else %}
+                                    <span class="text-sm text-brand-gray-text">
+                                        No keywords available.
+                                    </span>
+                                {% endif %}
+                            </div>
+                            {% if node.children %}
+                            <div class="topic-children mt-3 border-l border-brand-gray-border pl-4 sm:pl-6">
+                                {% for child in node.children %}
+                                    {{ render_node(child, open_ids) }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </details>
+                    </div>
+                    {% endmacro %}
+                    <div class="topic-hierarchy-container">
+                        {% for node in hierarchy %}
+                            {{ render_node(node, open_topic_ids) }}
+                        {% endfor %}
                     </div>
                 </section>
                 <!-- === Relevant Documents Card === -->
-                <section id="relevant-docs" class="relevant-docs-card" data-show="">
+                <section 
+                    id="relevant-docs" 
+                    class="relevant-docs-card" 
+                    data-selected-topic="{{ selected_topic_id }}"
+                >
                     <h2 class="text-2xl font-semibold text-brand-gray">
                         Relevant Documents for 
-                        <span class="primary-color">
-                            {{topic_name}}
+                        <span class="primary-color" id="selected-topic-label">
+                            {{ selected_topic_name }}
                         </span>
                     </h2>
-                    <div class="flex flex-col divide-y divide-brand-gray-border">
-                        {% for doc in rep_docs %}
-                        <div class="py-3 sm:py-4">
-                            <p class="text-xs sm:text-sm text-brand-gray-text">
-                                {{ doc.case_number }}
+                    <div 
+                        id="relevant-docs-list"
+                        class="flex flex-col divide-y divide-brand-gray-border"
+                    >
+                        {% if selected_docs %}
+                            {% for doc in selected_docs %}
+                            <div class="py-3 sm:py-4">
+                                <p class="text-xs sm:text-sm text-brand-gray-text">
+                                    {{ doc.case_number }}
+                                </p>
+                                <a 
+                                    href="{{ doc.case_link }}" 
+                                    class="text-sm sm:text-base md:text-lg font-medium text-brand-blue hover:underline block mt-1" 
+                                    target="_blank"
+                                >
+                                    {{ doc.case_title }}
+                                </a>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="py-3 text-sm text-brand-gray-text">
+                                No representative documents available for this topic.
                             </p>
-                            <a 
-                                href="{{ doc.case_link }}" 
-                                class="text-sm sm:text-base md:text-lg font-medium text-brand-blue hover:underline block mt-1" 
-                                target="_blank"
-                            >
-                                {{ doc.case_title }}
-                            </a>
-                        {% endfor %}
-                        </div>
+                        {% endif %}
+                    </div>
+                    <div 
+                        id="docs-pagination" 
+                        class="mt-4 hidden w-full flex flex-nowrap items-center justify-between gap-4 rounded-xl border border-brand-gray-border bg-white/70 px-4 py-2 shadow-sm"
+                    >
+                        <button 
+                            id="docs-prev-btn" 
+                            type="button" 
+                            class="flex flex-shrink-0 items-center gap-2 rounded-lg border border-transparent bg-sky-50 px-3 py-2 text-sm font-medium text-brand-blue transition-colors duration-150 hover:bg-sky-100 disabled:cursor-not-allowed disabled:bg-brand-gray-border disabled:text-brand-gray"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M12.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L8.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                            </svg>
+                            Previous
+                        </button>
+                        <p id="docs-pagination-info" class="flex-1 text-center text-sm text-brand-gray-text"></p>
+                        <button 
+                            id="docs-next-btn" 
+                            type="button" 
+                            class="flex flex-shrink-0 items-center gap-2 rounded-lg border border-transparent bg-sky-50 px-3 py-2 text-sm font-medium text-brand-blue transition-colors duration-150 hover:bg-sky-100 disabled:cursor-not-allowed disabled:bg-brand-gray-border disabled:text-brand-gray"
+                        >
+                            Next
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M7.293 4.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 11-1.414-1.414L11.586 10 7.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
                     </div>
                 </section>
                 <div class="mt-2 sm:mt-4">
@@ -156,34 +219,238 @@
             </div>
         </footer>
     </body>
+    <script id="hierarchy-data" type="application/json">{{ hierarchy_json | safe }}</script>
     <script>
-        const summaries = document.querySelectorAll('summary');
-        const docsSection = document.getElementById('relevant-docs');
-        const topicLabel = docsSection.querySelector('span.text-brand-blue');
+        (function () {
+            const dataElement = document.getElementById('hierarchy-data');
+            if (!dataElement) {
+                return;
+            }
 
-        summaries.forEach(summary => {
-            summary.addEventListener('click', (e) => {
-                const isChevron = e.target.closest('.chevron');
+            const WARMUP_ENDPOINT = '/search/warmup';
+            const newSearchLink = document.querySelector('.footer-action-btn[href="/"]');
 
-                if (!isChevron) {
-                    e.preventDefault(); 
-    
-                    const topicSpan = summary.querySelector('.topic-title');
-                    if (topicSpan) {
-                        const selectedTopic = topicSpan.dataset.topic;
-                        topicLabel.textContent = selectedTopic;
-                        docsSection.classList.remove('hidden');
-                        docsSection.scrollIntoView({ behavior: 'smooth' });
+            const warmSearchApi = (trigger) => {
+                const payload = JSON.stringify({ trigger });
+                if (navigator.sendBeacon) {
+                    const beaconData = new Blob([payload], { type: 'application/json' });
+                    if (navigator.sendBeacon(WARMUP_ENDPOINT, beaconData)) {
+                        return;
                     }
                 }
-            });
-            const summaries = document.querySelectorAll('summary');
-            summary.addEventListener('click', (e) => {
-                const isChevron = e.target.closest('.chevron');
-                if (!isChevron) {
-                    e.preventDefault();
+                fetch(WARMUP_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: payload,
+                    keepalive: true,
+                }).catch(() => {
+                    /* Ignore warmup errors; navigation takes priority */
+                });
+            };
+
+            if (newSearchLink) {
+                newSearchLink.addEventListener('click', () => warmSearchApi('start-new-search'));
+            }
+
+            let hierarchyData = [];
+            try {
+                hierarchyData = JSON.parse(dataElement.textContent || '[]');
+            } catch (error) {
+                console.error('Failed to parse hierarchy JSON', error);
+                return;
+            }
+
+            const topicIndex = new Map();
+            const indexNodes = (nodes) => {
+                nodes.forEach((node) => {
+                    topicIndex.set(node.id, node);
+                    if (Array.isArray(node.children) && node.children.length) {
+                        indexNodes(node.children);
+                    }
+                });
+            };
+            indexNodes(hierarchyData);
+
+            const docsSection = document.getElementById('relevant-docs');
+            const docsContainer = document.getElementById('relevant-docs-list');
+            const topicLabel = document.getElementById('selected-topic-label');
+            const paginationContainer = document.getElementById('docs-pagination');
+            const paginationInfo = document.getElementById('docs-pagination-info');
+            const prevButton = document.getElementById('docs-prev-btn');
+            const nextButton = document.getElementById('docs-next-btn');
+            const summaries = Array.from(document.querySelectorAll('.topic-summary'));
+
+            if (!docsSection || !docsContainer || !topicLabel) {
+                return;
+            }
+
+            const DOCS_PER_PAGE = 5;
+            const SELECTED_CLASSES = {
+                default: ['bg-blue-50', 'ring', 'ring-blue-200', 'rounded-xl'],
+                closest: ['bg-emerald-50', 'ring', 'ring-emerald-200', 'rounded-xl'],
+            };
+            let activeSummary = null;
+            let currentDocs = [];
+            let currentPage = 0;
+
+            const clearActiveSummary = () => {
+                if (!activeSummary) {
+                    return;
                 }
+                activeSummary.classes.forEach((cls) => activeSummary.element.classList.remove(cls));
+                activeSummary = null;
+            };
+
+            const highlightSummary = (summaryEl, node) => {
+                if (!summaryEl) {
+                    return;
+                }
+                clearActiveSummary();
+                const classes = node && node.is_closest ? SELECTED_CLASSES.closest : SELECTED_CLASSES.default;
+                classes.forEach((cls) => summaryEl.classList.add(cls));
+                activeSummary = { element: summaryEl, classes };
+            };
+
+            const updatePagination = (totalPages) => {
+                if (!paginationContainer) {
+                    return;
+                }
+
+                if (!totalPages || totalPages <= 1) {
+                    paginationContainer.classList.add('hidden');
+                    if (paginationInfo) {
+                        paginationInfo.textContent = '';
+                    }
+                    if (prevButton) {
+                        prevButton.disabled = true;
+                    }
+                    if (nextButton) {
+                        nextButton.disabled = true;
+                    }
+                    return;
+                }
+
+                paginationContainer.classList.remove('hidden');
+                const start = currentPage * DOCS_PER_PAGE + 1;
+                const end = Math.min((currentPage + 1) * DOCS_PER_PAGE, currentDocs.length);
+                if (paginationInfo) {
+                    paginationInfo.textContent = `Showing ${start}-${end} of ${currentDocs.length}`;
+                }
+                if (prevButton) {
+                    prevButton.disabled = currentPage === 0;
+                }
+                if (nextButton) {
+                    nextButton.disabled = currentPage >= totalPages - 1;
+                }
+            };
+
+            const renderDocsPage = (page = 0) => {
+                docsContainer.replaceChildren();
+
+                if (!Array.isArray(currentDocs) || currentDocs.length === 0) {
+                    const emptyMessage = document.createElement('p');
+                    emptyMessage.className = 'py-3 text-sm text-brand-gray-text';
+                    emptyMessage.textContent = 'No representative documents available for this topic.';
+                    docsContainer.appendChild(emptyMessage);
+                    currentPage = 0;
+                    updatePagination(0);
+                    return;
+                }
+
+                const totalPages = Math.ceil(currentDocs.length / DOCS_PER_PAGE);
+                currentPage = Math.min(Math.max(page, 0), Math.max(totalPages - 1, 0));
+                const startIndex = currentPage * DOCS_PER_PAGE;
+                const slice = currentDocs.slice(startIndex, startIndex + DOCS_PER_PAGE);
+
+                slice.forEach((doc) => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'py-3 sm:py-4';
+
+                    const caseNumber = document.createElement('p');
+                    caseNumber.className = 'text-xs sm:text-sm text-brand-gray-text';
+                    caseNumber.textContent = doc.case_number || 'Case number unavailable';
+
+                    const link = document.createElement('a');
+                    link.className = 'text-sm sm:text-base md:text-lg font-medium text-brand-blue hover:underline block mt-1';
+                    link.href = doc.case_link || '#';
+                    link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
+                    link.textContent = doc.case_title || 'View document';
+
+                    wrapper.appendChild(caseNumber);
+                    wrapper.appendChild(link);
+                    docsContainer.appendChild(wrapper);
+                });
+
+                updatePagination(totalPages);
+            };
+
+            const selectTopic = (topicId, options = { scroll: true }) => {
+                const node = topicIndex.get(topicId);
+                const summaryEl = document.querySelector(`.topic-summary[data-topic-id="${topicId}"]`);
+
+                if (!node || !summaryEl) {
+                    return;
+                }
+
+                const detailsEl = summaryEl.closest('details');
+                if (detailsEl && !detailsEl.open) {
+                    detailsEl.open = true;
+                }
+
+                highlightSummary(summaryEl, node);
+                docsSection.dataset.selectedTopic = topicId;
+                topicLabel.textContent = node.name || 'Selected Topic';
+                currentDocs = Array.isArray(node.representative_docs) ? node.representative_docs : [];
+                renderDocsPage(0);
+
+                if (options.scroll) {
+                    docsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            };
+
+            if (prevButton) {
+                prevButton.addEventListener('click', () => {
+                    if (currentPage === 0) {
+                        return;
+                    }
+                    renderDocsPage(currentPage - 1);
+                });
+                prevButton.disabled = true;
+            }
+
+            if (nextButton) {
+                nextButton.addEventListener('click', () => {
+                    const totalPages = Math.ceil((currentDocs || []).length / DOCS_PER_PAGE);
+                    if (!totalPages || currentPage >= totalPages - 1) {
+                        return;
+                    }
+                    renderDocsPage(currentPage + 1);
+                });
+                nextButton.disabled = true;
+            }
+
+            summaries.forEach((summary) => {
+                summary.addEventListener('click', (event) => {
+                    const isChevron = event.target.closest('.chevron');
+                    if (!isChevron) {
+                        event.preventDefault();
+                        const topicId = summary.dataset.topicId;
+                        selectTopic(topicId);
+                    }
+                });
             });
-        });
+
+            const initialTopicId = docsSection.dataset.selectedTopic;
+            if (initialTopicId && topicIndex.has(initialTopicId)) {
+                selectTopic(initialTopicId, { scroll: false });
+            } else {
+                const iterator = topicIndex.keys();
+                const fallbackId = iterator.next().value;
+                if (fallbackId) {
+                    selectTopic(fallbackId, { scroll: false });
+                }
+            }
+        })();
     </script>
 </html>
