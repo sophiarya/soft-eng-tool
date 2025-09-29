@@ -67,7 +67,6 @@
                                 id="search-query" 
                                 name="search_term" 
                                 rows="4" 
-                                placeholder="Enter a search phrase or keyword..."
                                 required
                                 class="text-sm sm:text-base md:text-lg"
                             ></textarea>
@@ -245,6 +244,234 @@
         const searchField = document.getElementById('search-query');
         const WARMUP_ENDPOINT = '/search/warmup';
         const footerCta = document.querySelector('.footer-action-btn[href="#hero"]');
+
+        if (searchField) {
+            const placeholderBaseText = 'Enter search term or keyword...';
+            const placeholderPrompts = [
+                placeholderBaseText,
+            "mayor accused of rigging election canvassing",
+            "dispute between siblings over farmland inheritance",
+            "contractor sues government over unpaid road project",
+            "judge removed for repeated absence and partiality",
+            "teacher dismissed from public service for falsified credentials",
+            "passenger sues bus company for reckless driving accident",
+            "customs seizes undeclared luxury cars at port",
+            "sugar farmers protest unfair milling contract terms",
+            "barangay captain faces graft charges for ghost projects",
+            "nullification of marriage after spouse diagnosed with schizophrenia",
+            "appeal denied for late filing of pleadings",
+            "fisherman charged with dynamite fishing and environmental violations",
+            "businessman accused of massive estafa through fake investments",
+            "foreigner petitions for Philippine citizenship despite prior renunciation",
+            "survivor contests will allegedly signed under duress",
+            "disqualification of party-list group for fraudulent nominees",
+            "insurance company refuses payout after insured dies of pre-existing illness",
+            "military officer charged for collaborating with Japanese during WWII",
+            "civil registry entry corrected after clerical error in parent’s name",
+            "police officer prosecuted for illegal possession of M16 rifle",
+            "survivor of child abuse testifies against stepfather",
+            "bigamy case filed after discovery of hidden first marriage",
+            "corporation sanctioned for unregistered securities sales",
+            "telephone company fined for failure to comply with franchise obligations",
+            "jeepney operators clash over overlapping transport routes",
+            "teacher demands reinstatement after illegal dismissal",
+            "woman accuses neighbor of abduction of her daughter",
+            "widow sues for denial of GSIS survivorship pension",
+            "heirs file case for partition of ancestral house and lot",
+            "robbery with homicide in provincial bank",
+            "lawyer disbarred for forging client’s signature",
+            "employer disputes SSS assessment for unpaid contributions",
+            "cargo lost at pier due to port operator negligence",
+            "worker seeks compensation after injury in logging site",
+            "residents protest expropriation of land for power lines",
+            "taxpayer challenges BIR computation of income tax deficiency",
+            "complaint filed over bounced checks in loan repayment",
+            "appeal questioning COA’s disallowance of travel expenses",
+            "arbitration award contested in dispute over mall construction",
+            "foreign airline sued for bumping off passengers",
+            "mining permit holder accused of encroaching indigenous land",
+            "arson case involving burned down public school",
+            "petition to declare missing husband legally dead",
+            "father ordered to pay child support despite loss of job",
+            "accused seeks bail reduction after drug trafficking charge",
+            "validity of will contested due to lack of notarization",
+            "fisherman sues over loss of fishpond water rights",
+            "senator accused of hiding ill-gotten wealth through dummies",
+            "bail bond forfeited after accused jumps trial",
+            "landlord and tenant dispute over rice farm lease"
+
+            ];
+            const TYPE_DELAY = 50;
+            const DELETE_DELAY = 30;
+            const HOLD_AFTER_COMPLETE = 1800;
+            const HOLD_BEFORE_NEXT = 900;
+            const CARET_BLINK_INTERVAL = 520;
+            const CARET_CHAR = '|';
+
+            let animationFrameId = null;
+            let caretIntervalId = null;
+            let caretVisible = true;
+            let promptQueue = [];
+            let hasShownInitialPrompt = false;
+            let currentPrompt = '';
+            let charIndex = 0;
+            let deleting = false;
+            let userHasInput = false;
+
+            const animationState = {
+                lastTimestamp: 0,
+                delay: HOLD_BEFORE_NEXT
+            };
+
+            const shufflePrompts = () => {
+                return placeholderPrompts
+                    .slice(1)
+                    .map((value) => ({ value, sort: Math.random() }))
+                    .sort((a, b) => a.sort - b.sort)
+                    .map(({ value }) => value);
+            };
+
+            const nextPrompt = () => {
+                if (!hasShownInitialPrompt) {
+                    hasShownInitialPrompt = true;
+                    return placeholderBaseText;
+                }
+                if (!promptQueue.length) {
+                    promptQueue = shufflePrompts();
+                }
+                if (!promptQueue.length) {
+                    return placeholderBaseText;
+                }
+                return promptQueue.pop();
+            };
+
+            const ensurePrompt = () => {
+                if (!currentPrompt) {
+                    currentPrompt = nextPrompt();
+                }
+            };
+
+            const renderPlaceholder = () => {
+                if (!searchField || userHasInput) {
+                    return;
+                }
+                ensurePrompt();
+                const visibleText = currentPrompt.slice(0, charIndex);
+                const caret = caretVisible ? CARET_CHAR : '';
+                searchField.placeholder = `${visibleText}${caret}`;
+            };
+
+            const stopAnimation = () => {
+                if (animationFrameId !== null) {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                }
+                if (caretIntervalId) {
+                    clearInterval(caretIntervalId);
+                    caretIntervalId = null;
+                }
+            };
+
+            const runAnimationFrame = (timestamp) => {
+                if (!searchField || userHasInput) {
+                    animationFrameId = null;
+                    return;
+                }
+
+                if (!animationState.lastTimestamp) {
+                    animationState.lastTimestamp = timestamp;
+                }
+
+                const elapsed = timestamp - animationState.lastTimestamp;
+                if (elapsed < animationState.delay) {
+                    animationFrameId = window.requestAnimationFrame(runAnimationFrame);
+                    return;
+                }
+
+                animationState.lastTimestamp = timestamp;
+
+                if (!deleting) {
+                    ensurePrompt();
+                    charIndex = Math.min(charIndex + 1, currentPrompt.length);
+                    if (charIndex === currentPrompt.length) {
+                        deleting = true;
+                        animationState.delay = HOLD_AFTER_COMPLETE;
+                    } else {
+                        animationState.delay = TYPE_DELAY;
+                    }
+                } else {
+                    charIndex = Math.max(charIndex - 1, 0);
+                    if (charIndex === 0) {
+                        deleting = false;
+                        currentPrompt = '';
+                        animationState.delay = HOLD_BEFORE_NEXT;
+                    } else {
+                        animationState.delay = DELETE_DELAY;
+                    }
+                }
+
+                renderPlaceholder();
+                animationFrameId = window.requestAnimationFrame(runAnimationFrame);
+            };
+
+            const startAnimation = () => {
+                if (userHasInput) {
+                    return;
+                }
+                stopAnimation();
+                promptQueue = shufflePrompts();
+                currentPrompt = '';
+                charIndex = 0;
+                deleting = false;
+                caretVisible = true;
+                hasShownInitialPrompt = false;
+                animationState.lastTimestamp = 0;
+                animationState.delay = HOLD_BEFORE_NEXT;
+                renderPlaceholder();
+                caretIntervalId = window.setInterval(() => {
+                    if (userHasInput) {
+                        return;
+                    }
+                    caretVisible = !caretVisible;
+                    renderPlaceholder();
+                }, CARET_BLINK_INTERVAL);
+                animationFrameId = window.requestAnimationFrame(runAnimationFrame);
+            };
+
+            const handleInput = () => {
+                userHasInput = searchField.value.length > 0;
+                if (userHasInput) {
+                    stopAnimation();
+                    searchField.placeholder = placeholderBaseText;
+                } else {
+                    startAnimation();
+                }
+            };
+
+            const handleFocus = () => {
+                if (searchField.value.length === 0) {
+                    userHasInput = false;
+                    renderPlaceholder();
+                    if (animationFrameId === null) {
+                        animationState.lastTimestamp = 0;
+                        animationFrameId = window.requestAnimationFrame(runAnimationFrame);
+                    }
+                }
+            };
+
+            const handleBlur = () => {
+                if (searchField.value.length === 0) {
+                    userHasInput = false;
+                    renderPlaceholder();
+                }
+            };
+
+            searchField.addEventListener('input', handleInput);
+            searchField.addEventListener('focus', handleFocus);
+            searchField.addEventListener('blur', handleBlur);
+
+            startAnimation();
+        }
 
         const warmSearchApi = async (trigger) => {
             try {
