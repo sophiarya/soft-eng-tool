@@ -49,6 +49,28 @@ p {
     font: var(--brand-gray-text);
 }
 
+body,
+div,
+span,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a {
+    user-select: text;
+    outline: none;
+    caret-color: transparent;
+}
+
+textarea,
+input {
+    user-select: text;
+    caret-color: auto;
+}
+
 .primary-color {color: var(--brand-blue);} 
 .secondary-color {color: var(--brand-gray);} 
 .juris {color: var(--brand-gray);} 
@@ -293,24 +315,19 @@ p {
 
 /* === Spinner Loader === */
 .spinner {
-    width: 20px;
-    height: 20px;
-    border: 2px solid #e5e7eb;
-    border-top: 2px solid #5060FF;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #536EF5;
     border-radius: 50%;
+    width: 48px;
+    height: 48px;
     animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
+    to {
         transform: rotate(360deg);
     }
 }
-
 /* =========================================================
    HOW IT WORKS
 ========================================================= */
@@ -816,6 +833,288 @@ details[open]>summary .chevron {
     transform: rotate(90deg);
 }
 
+.search-container {
+    width: 100%;
+    max-width: 768px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    height: 63px;
+    padding-left: 26.26px;
+    padding-right: 26.26px;
+    border-radius: 26.26px;
+    border: 1px solid var(--brand-gray-border);
+    background-color: var(--brand-white);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-form:focus-within {
+    border-color: var(--brand-blue);
+    box-shadow: 0 0 0 3px rgba(80, 96, 255, 0.2);
+}
+
+.search-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 25px;
+    height: 25px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #A0A0A0;
+}
+
+.search-button svg {
+    width: 100%;
+    height: 100%;
+}
+
+.search-input {
+    flex: 1;
+    font-family: 'Inter', sans-serif;
+    font-size: 18.382px;
+    font-weight: 400;
+    line-height: normal;
+    color: var(--brand-gray);
+    border: none;
+    outline: none;
+    background: transparent;
+}
+
+.search-input::placeholder {
+    color: #9CA3AF;
+}
+
+/* =========================================================
+   CLOSEST MATCH CARD
+========================================================= */
+.closest-match-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1163px;
+    padding: 54px 48px;
+    border-radius: 16px;
+    border: 3px solid #D2F9E1;
+    background: #F6FFFA;
+    box-shadow: 0 12px 20px rgba(80, 96, 255, 0.12);
+    gap: 28px;
+}
+
+/* === Header Section === */
+.closest-match-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.circle-outer {
+    position: relative;
+    width: 62px;
+    height: 62px;
+}
+
+.circle-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 47.238px;
+    height: 47.238px;
+}
+
+.closest-match-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 34px;
+    color: #075E3C;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.match-score {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4.538px 7.942px;
+    border-radius: 4.538px;
+    background: #13B670;
+    color: #FFF;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13.615px;
+    font-weight: 400;
+    line-height: 24.96px;
+    justify-content: center;
+}
+
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid #13B670;
+    background: #fff;
+    color: #13B670;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+.tooltip-icon:hover {
+    background: #f0fdf4;
+}
+
+.tooltip-card {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    transform: translateY(-10px);
+    width: 260px;
+    background: #fff;
+    color: #333;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 10;
+}
+
+.tooltip-card.active {
+    opacity: 1;
+    display: block;
+    visibility: visible;
+    transform: translateY(4%);
+}
+
+.tooltip-close {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.2s;
+}
+
+.tooltip-close:hover {
+    color: #333;
+}
+
+.tooltip-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #13B670;
+}
+
+.tooltip-body {
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 4px;
+}
+
+.closest-match-topics {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.topic-content-card {
+    display: flex;
+    height: 138px;
+    padding: 36px 36px 36px 41px;
+    justify-content: flex-end;
+    align-items: center;
+    border-radius: 8px;
+    border: 1px solid #A8F2C9;
+    background: #FFF;
+}
+
+.topic-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 13px;
+    width: 990px;
+}
+
+.topic-title {
+    flex: 1 0 0;
+    align-self: stretch;
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 30px;
+    color: #3B3B3B;
+}
+
+.topic-topwords {
+    display: flex;
+    gap: 10px;
+}
+
+.closest-match-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 4.5px 0;
+}
+
+.btn-view-hierarchy {
+    border-radius: 11.7px;
+    border: 1.74px solid #37D089;
+    background: #FFF;
+    padding: 0.6rem 1.5rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-view-cases {
+    border-radius: 11.7px;
+    background: #13B670;
+    color: #FFF;
+    padding: 0.6rem 1.5rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+}
+
 .topic-hierarchy-card {
     width: 100%;
     background-color: var(--brand-white);
@@ -967,6 +1266,50 @@ details[open]>summary .chevron {
     }
 }
 
+@media (max-width: 640px) {
+    .search-form {
+        height: 55px;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        gap: 10px;
+    }
+
+    .search-button {
+        width: 25px;
+        height: 25px;
+    }
+
+    .search-input {
+        font-size: 16px;
+    }
+
+    .closest-match-card {
+        padding: 24px 16px;
+        gap: 16px;
+    }
+
+    .closest-match-title {
+        font-size: 18px;
+        line-height: 26px;
+    }
+
+    .match-score {
+        width: 80px;
+        height: 26px;
+        font-size: 11px;
+    }
+
+    .tooltip-text {
+        width: 160px;
+        font-size: 12px;
+    }
+
+    .closest-match-buttons {
+        flex-direction: column;
+        gap: 12px;
+    }
+}
+
 @media (min-width: 768px) {
     .topic-hierarchy-card {
         padding: 2rem;
@@ -982,7 +1325,44 @@ details[open]>summary .chevron {
 }
 
 @media (min-width: 1024px) {
+    .search-form {
+        height: 63px;
+        padding-left: 26.26px;
+        padding-right: 26.26px;
+    }
+
+    .search-input {
+        font-size: 18.382px;
+    }
+
     .topic-hierarchy-card {
         padding: 2.5rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .closest-match-card {
+        padding: 36px 24px;
+    }
+
+    .closest-match-title {
+        font-size: 20px;
+        line-height: 28px;
+    }
+
+    .header-right {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .match-score {
+        width: 90px;
+        height: 28px;
+        font-size: 12px;
+        padding: 3px 6px;
+    }
+
+    .tooltip-text {
+        width: 180px;
     }
 }

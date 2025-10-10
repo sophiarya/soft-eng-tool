@@ -80,6 +80,7 @@
                             <textarea 
                                 id="search-query" 
                                 name="search_term" 
+                                type="text"
                                 rows="4" 
                                 required
                                 class="text-sm sm:text-base md:text-lg"
@@ -91,16 +92,12 @@
                                         class="text-sm sm:text-base md:text-lg"
                                     >
                                         Search Topics
-                                    </span>
-                                    <span id="search-btn-loading" class="hidden">
-                                        <div class="spinner"></div>
-                                    </span>
                                 </button>
                             </div>
                         </form>
                     </div>
                 </section>
-                <!-- === How it Wotks Section === -->
+                <!-- === How it Works Section === -->
                 <section class="how-it-works" id="how-it-works">
                     <div class="hiw-header">
                         <h2 class="hiw-title">Find Cases in Just a Few Clicks</h2>
@@ -251,6 +248,13 @@
                 © 2025 JurisTopic. All rights reserved.
             </div>
         </footer>
+        <!-- Page Loader -->
+        <div id="page-loader" class="fixed inset-0 z-50 hidden items-center justify-center">
+            <div class="absolute inset-0 bg-white/50 backdrop-blur-sm"></div>
+            <div class="relative z-10">
+                <div class="spinner"></div>
+            </div>
+        </div>
     </body>
     <script>
         const sections = document.querySelectorAll("section[id]");
@@ -487,6 +491,16 @@
             startAnimation();
         }
 
+        if (searchField) {
+            // Submit form on Enter (without Shift)
+            searchField.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault(); 
+                    document.getElementById('search-form').submit(); 
+                }
+            });
+        }
+
         const warmSearchApi = async (trigger) => {
             try {
                 await fetch(WARMUP_ENDPOINT, {
@@ -546,7 +560,7 @@
         }
 
         function activateLink() {
-            let scrollPos = window.scrollY + 80; // offset for navbar height
+            let scrollPos = window.scrollY + 80;
             sections.forEach(section => {
                 if (
                     scrollPos >= section.offsetTop &&
@@ -563,8 +577,8 @@
 
         const topicIframe = document.getElementById('topic-hierarchy-iframe');
         const fullscreenToggleBtn = document.getElementById('topic-fullscreen-toggle');
-        const TOPIC_IFRAME_SCROLL_Y = 107; // Change this to adjust the vertical offset inside the iframe (px)
-        const TOPIC_IFRAME_SCROLL_X = 110; // Change this to adjust the horizontal offset inside the iframe (px)
+        const TOPIC_IFRAME_SCROLL_Y = 107; 
+        const TOPIC_IFRAME_SCROLL_X = 110; 
         let topicIframeScrollApplied = false;
 
         const brandVizBackground = () => {
@@ -755,26 +769,17 @@
             }
         }
 
-        document.getElementById('search-form').addEventListener('submit', function(e) {
-            // Prevent the immediate navigation so the browser can repaint and show the
-            // loading spinner. Then submit the form programmatically shortly after.
+        document.getElementById('search-form').addEventListener('submit', function (e) {
             e.preventDefault();
 
-            var form = this;
-            var btn = document.getElementById('search-btn');
-            var btnText = document.getElementById('search-btn-text');
-            var btnLoading = document.getElementById('search-btn-loading');
+            const pageLoader = document.getElementById('page-loader');
+            if (pageLoader) {
+                pageLoader.classList.remove('hidden');
+            }
 
-            // Hide the text and show the spinner
-            btnText.classList.add('hidden');
-            btnLoading.classList.remove('hidden');
-            btnLoading.classList.add('active');
-            btn.disabled = true;
-
-            // Allow the browser to repaint so the spinner becomes visible before navigation
-            requestAnimationFrame(function() {
-                setTimeout(function() {
-                    form.submit();
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    this.submit();
                 }, 50);
             });
         });

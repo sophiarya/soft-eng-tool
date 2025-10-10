@@ -49,11 +49,113 @@
             </div>
         </nav>
         <div class="page-container mt-12">
+            <div class="absolute inset-0 -z-10 bg-top-gradient"></div>
             <main class="main-container gap-12">
+                <header class="site-header mb-0">
+                    <div class="logo-container"></div>
+                    <div class="title-container">
+                        <h1 class="header-title">
+                            Juris
+                            <span class="header-highlight -ml-5">
+                                Topic
+                            </span>
+                        </h1>
+                        <p class="header-description">
+                            A Smarter Way to Explore Philippine Legal Topics
+                        </p>
+                    </div>
+                </header>
+                <div class="search-container">
+                    <form action="/search" method="get" class="search-form">
+                        <button type="submit" class="search-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="search-icon" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+                            </svg>
+                        </button>
+                        <input type="text" name="q" value="[content]" placeholder="Enter legal topic or keyword" class="search-input" />
+                    </form>
+                </div>
+                <section class="closest-match-card">
+                    <div class="closest-match-header">
+                        <div class="header-left">
+                            <div class="circle-outer">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 62 62" fill="none">
+                                    <circle cx="31" cy="31" r="31" fill="#D2F9E1" />
+                                </svg>
+                                <div class="circle-inner">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M15.1028 22.9759L18.1456 13.8475H20.0128L23.0557 22.9759L32.1841 26.0187V27.886L23.0557 30.9288L20.0128 40.0572H18.1456L15.1028 30.9288L5.97437 27.886V26.0187L15.1028 22.9759Z"
+                                            fill="#13B670" />
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M32.325 10.6743L33.8916 5.97449H35.7589L37.3255 10.6743L42.0254 12.241V14.1082L37.3255 15.6748L35.7589 20.3747H33.8916L32.325 15.6748L27.6252 14.1082V12.241L32.325 10.6743Z"
+                                            fill="#13B670" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <h1 class="closest-match-title">
+                                Most Relevant Topic
+                            </h1>
+                        </div>
+                        <div class="header-right">
+                            <div class="match-score">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none">
+                                    <path
+                                        d="M10.952 4.69086H14.9229M14.9229 4.69086V8.66176M14.9229 4.69086L9.29741 10.3163L5.98833 7.00721L1.68652 11.309"
+                                        stroke="white" stroke-width="1.32363" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <span>[content]% Match</span>
+                            </div>
+                            <div class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <div class="tooltip-card">
+                                    <button type="button" class="tooltip-close">&times;</button>
+                                    <h3 class="tooltip-title">How Related Are These Topics?</h3>
+                                    <p class="tooltip-body mb-4">
+                                        Topics are organized in a hierarchy, from broad parent topics 
+                                        to more specific subtopics. This helps you explore related
+                                        legal topics in a structured way.
+                                    </p>
+                                    <p class="tooltip-body mb-4">
+                                        <strong>Understanding Similarity Scores: </strong>
+                                        When you search for a term, our system compares it to all topics 
+                                        using a similarity score. Higher percentages mean the topic 
+                                        is more closely related to your search.
+                                    </p>
+                                    <p class="tooltip-body">
+                                        <strong>Tip for Exploring: </strong> 
+                                        Start with the highlighted parent topic and explore its subtopics 
+                                        from general to specific. Check the related documents below each 
+                                        topic to see real cases connected to it.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="topic-content-card">
+                        <div class="topic-content-wrapper">
+                            <h2 class="topic-title">[content]</h2>
+                            <div class="topic-topwords">
+                                <span class="topwords">[content]</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="closest-match-buttons">
+                        <button class="btn-view-hierarchy">View Full Hierarchy</button>
+                        <button class="btn-view-cases">View Related Cases</button>
+                    </div>
+                </section>
                 <section class="topic-hierarchy-card">
-                    <h2 class="secondary-color text-lg sm:text-xl md:text-2xl font-semibold">
-                        Topic Hierarchy
-                    </h2>
+                    <div class="dendogram-header-text">
+                        <h2 class="secondary-color text-lg sm:text-xl md:text-2xl font-semibold">
+                            Topic Hierarchy
+                        </h2>
+                        <p class="text-sm sm:text-base">
+                            Explore all extracted topics from the analyzed case
+                        </p>
+                    </div>
                     {% macro render_node(node, open_ids) %}
                     <div class="topic-details-wrapper" data-topic-id="{{ node.id }}">
                         <details class="group" data-topic-id="{{ node.id }}" {% if node.id in open_ids %}open{% endif %}>
@@ -66,7 +168,7 @@
                                     >
                                         <path 
                                             fill-rule="evenodd" 
-                                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" 
+                                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                             clip-rule="evenodd" 
                                         />
                                     </svg>
@@ -80,13 +182,13 @@
                                         data-topic-id="{{ node.id }}" 
                                         data-topic-name="{{ node.name }}"
                                     >
-                                        {{ node.name }}
-                                    </span>
-                                    {% if node.is_closest %}
+                                            {{ node.name }}
+                                        </span>
+                                        {% if node.is_closest %}
                                     <span class="ml-2 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold uppercase tracking-wide">
-                                        Closest Match
-                                    </span>
-                                    {% endif %}
+                                            Closest Match
+                                        </span>
+                                        {% endif %}
                                 </div>
                             </summary>
                             <div class="topwords-container">
@@ -235,6 +337,48 @@
     </body>
     <script id="hierarchy-data" type="application/json">{{ hierarchy_json | safe }}</script>
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const hierarchyButton = document.querySelector('.btn-view-hierarchy');
+            const casesButton = document.querySelector('.btn-view-cases');
+
+            const hierarchySection = document.querySelector('.topic-hierarchy-card');
+            const docsSection = document.getElementById('relevant-docs');
+
+            if (hierarchyButton && hierarchySection) {
+                hierarchyButton.addEventListener('click', () => {
+                    hierarchySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            }
+
+            if (casesButton && docsSection) {
+                casesButton.addEventListener('click', () => {
+                    docsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            }
+        });
+
+        document.querySelectorAll('.tooltip-container').forEach(container => {
+            const icon = container.querySelector('.tooltip-icon');
+            const card = container.querySelector('.tooltip-card');
+            const closeBtn = container.querySelector('.tooltip-close');
+
+            icon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                card.classList.toggle('active');
+            });
+
+            closeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                card.classList.remove('active');
+            });
+
+            // Clicking outside closes the tooltip
+            document.addEventListener('click', (e) => {
+                if (!container.contains(e.target)) {
+                    card.classList.remove('active');
+                }
+            });
+        });
         (function () {
             const dataElement = document.getElementById('hierarchy-data');
             if (!dataElement) {
