@@ -528,6 +528,40 @@ input {
     gap: 0.5rem;
 }
 
+.topic-info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    border-radius: 9999px;
+    border: 2px solid #B0B0B0;
+    color: #B0B0B0;
+    font-weight: 600;
+    background: var(--brand-white, #FFFFFF);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.topic-info-icon:hover {
+    background: #EAEAEA;
+    color: #444444;
+    border-color: #A0A0A0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.topic-info-card.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) !important;
+}
+
+.topic-info-close {
+    cursor: pointer;
+}
+
 /* =========================================================
    FOOTER
 ========================================================= */

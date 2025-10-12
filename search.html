@@ -137,21 +137,53 @@
                     <div class="dendogram-header">
                         <div class="dendogram-header-content">
                             <div class="flex-shrink-0 mt-0.5 sm:mt-0">
-                                <img 
-                                    src="src\doc_icon.svg" 
-                                    alt="How it works icon" 
-                                    class="h-6 w-6 sm:h-8 sm:w-8 md:h-9 md:w-9" 
-                                />
+                                <div class="flex items-center justify-center w-14 h-14 rounded-full" style="background-color: #e0e2fb8c;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none">
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M10.8763 3.06958C11.2448 3.02362 11.6199 3 12 3C12.3801 3 12.7552 3.02362 13.1237 3.06958L12.8763 5.05421C12.5896 5.01846 12.2972 5 12 5C11.7028 5 11.4104 5.01846 11.1237 5.05421L10.8763 3.06958ZM3 12C3 11.6199 3.02362 11.2448 3.06958 10.8763L5.05421 11.1237C5.01846 11.4104 5 11.7028 5 12C5 12.2972 5.01846 12.5896 5.05421 12.8763L3.06958 13.1237C3.02362 12.7552 3 12.3801 3 12ZM19 12C19 11.7028 18.9815 11.4104 18.9458 11.1237L20.9304 10.8763C20.9764 11.2448 21 11.6199 21 12C21 12.3801 20.9764 12.7552 20.9304 13.1237L18.9458 12.8763C18.9815 12.5896 19 12.2972 19 12ZM11.1237 18.9458C11.4104 18.9815 11.7028 19 12 19C12.2972 19 12.5896 18.9815 12.8763 18.9458L13.1237 20.9304C12.7552 20.9764 12.3801 21 12 21C11.6199 21 11.2448 20.9764 10.8763 20.9304L11.1237 18.9458Z"
+                                            fill="#8A94FF" />
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M3 6C3 4.34315 4.34315 3 6 3C7.65685 3 9 4.34315 9 6C9 7.65685 7.65685 9 6 9C4.34315 9 3 7.65685 3 6Z"
+                                            fill="#8A94FF" />
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M3 18C3 16.3431 4.34315 15 6 15C7.65685 15 9 16.3431 9 18C9 19.6569 7.65685 21 6 21C4.34315 21 3 19.6569 3 18Z"
+                                            fill="#8A94FF" />
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M15 18C15 16.3431 16.3431 15 18 15C19.6569 15 21 16.3431 21 18C21 19.6569 19.6569 21 18 21C16.3431 21 15 19.6569 15 18Z"
+                                            fill="#8A94FF" />
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M15 6C15 4.34315 16.3431 3 18 3C19.6569 3 21 4.34315 21 6C21 7.65685 19.6569 9 18 9C16.3431 9 15 7.65685 15 6Z"
+                                            fill="#8A94FF" />
+                                    </svg>
+                                </div>
                             </div>
                             <div class="dendogram-header-text">
-                                <h2 class="text-lg sm:text-md md:text-2xl font-semibold leading-tight">
-                                    <span class="secondary-color">
-                                        See How Juris
-                                        <span class="primary-color -ml-1">Topic</span> 
-                                        Works
-                                    </span>
-                                </h2>
-                                <p class="text-sm sm:text-base">
+                                <div class="flex items-center gap-2">
+                                    <h2 class="text-lg sm:text-md md:text-2xl font-semibold leading-tight">
+                                        <span class="secondary-color">
+                                            See How Juris
+                                            <span class="primary-color -ml-1">Topic</span> Works
+                                        </span>
+                                    </h2>
+                                    <div class="topic-info-tooltip relative inline-block">
+                                        <span class="topic-info-icon">?</span>
+                                        <div
+                                            class="topic-info-card absolute top-[120%] right-0 w-72 bg-white text-gray-700 rounded-xl shadow-lg p-4 opacity-0 invisible transform -translate-y-2 transition-all duration-300 z-10">
+                                            <button type="button"
+                                                class="topic-info-close absolute top-1 right-2 text-gray-400 hover:text-gray-600 text-lg font-bold">&times;</button>
+                                            <h3 class="topic-info-title text-brand-blue font-semibold text-sm mb-2">How Related Are These Topics?
+                                            </h3>
+                                            <p class="topic-info-body text-sm mb-2">
+                                                Topics are organized in a hierarchy, 
+                                                from broad parent topics to more specific subtopics. <br><br>
+                                                Each line represents a hierarchical connection;
+                                                closer nodes mean stronger conceptual ties.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                                <p class="text-sm sm:text-base mt-1">
                                     Explore our topic modeling visualization with sample legal data
                                 </p>
                             </div>
@@ -783,5 +815,28 @@
                 }, 50);
             });
         });
+
+        document.addEventListener("DOMContentLoaded", () => {
+                const tooltipIcon = document.querySelector(".topic-info-icon");
+                const tooltipCard = document.querySelector(".topic-info-card");
+                const closeBtn = document.querySelector(".topic-info-close");
+
+                if (tooltipIcon && tooltipCard && closeBtn) {
+                    tooltipIcon.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        tooltipCard.classList.toggle("active");
+                    });
+
+                    closeBtn.addEventListener("click", () => {
+                        tooltipCard.classList.remove("active");
+                    });
+
+                    document.addEventListener("click", (e) => {
+                        if (!tooltipCard.contains(e.target) && !tooltipIcon.contains(e.target)) {
+                            tooltipCard.classList.remove("active");
+                        }
+                    });
+                }
+            });
     </script>
 </html>
