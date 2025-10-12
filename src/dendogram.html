@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>JurisTopic – Semantic Topic Hierarchy</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f1ff;
+            color: #555;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        svg {
+            width: 100%;
+            height: 100vh;
+            cursor: grab;
+        }
+
+        .link {
+            fill: none;
+            stroke-width: 2.8px;
+            stroke-opacity: 0.9;
+            filter: drop-shadow(0 0 3px rgba(138, 77, 255, 0.3));
+        }
+
+        .node circle {
+            fill: #8A94FF;
+            stroke: #4c0099;
+            stroke-width: 2px;
+            cursor: pointer;
+            transition: fill 0.25s;
+        }
+
+        .node circle:hover {
+            fill: #4500e2;
+        }
+
+        .tooltip {
+            position: absolute;
+            padding: 6px 10px;
+            background: white;
+            border: 1px solid #C9CEFF;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            font-size: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            max-width: 280px;
+        }
+
+        .zoom-controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .zoom-controls button {
+            display: block;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: white;
+            font-size: 18px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+
+        .zoom-controls button:hover {
+            background: #f5f5f5;
+        }
+
+        .zoom-controls button:last-child {
+            border-bottom: none;
+        }
+
+        .label-bg {
+            fill: var(--Neutral-Colors-White, #FFF);
+            stroke: #C9CEFF;
+            stroke-width: 1px;
+            rx: 20;
+            ry: 20;
+        }
+
+        .label-text {
+            font-size: 13px;
+            fill: #333;
+        }
+
+        .label-group:hover .label-bg {
+            fill: #f0f1ff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="zoom-controls">
+        <button id="zoom_in">+</button>
+        <button id="zoom_out">−</button>
+    </div>
+
+    <div id="tooltip" class="tooltip"></div>
+    <svg id="dendrogram"></svg>
+
+    <script>
+        const tooltip = d3.select("#tooltip");
+
+        d3.json("../static/topic_hierarchy.json").then(data => {
+            const width = 2200;
+            const height = 1600;
+
+            const svg = d3.select("#dendrogram")
+                .attr("viewBox", [0, 0, width, height]);
+
+            const g = svg.append("g")
+                .attr("transform", `translate(${width - 400},150)`);
+
+            // Zoom controls
+            const zoom = d3.zoom()
+                .scaleExtent([0.4, 2.5])
+                .on("zoom", (event) => g.attr("transform", event.transform));
+
+            svg.call(zoom);
+            d3.select("#zoom_in").on("click", () => svg.transition().call(zoom.scaleBy, 1.2));
+            d3.select("#zoom_out").on("click", () => svg.transition().call(zoom.scaleBy, 0.8));
+
+            // Tree layout
+            const root = d3.hierarchy(data);
+            const tree = d3.cluster()
+                .size([height, width - 1200])
+                .separation((a, b) => (a.parent === b.parent ? 6 : 8));
+            tree(root);
+
+            root.descendants().forEach(d => d.y = width - d.y - 600);
+
+            const topAncestors = root.children ? root.children.map(d => d.data.name) : [root.data.name];
+            const colorScale = d3.scaleOrdinal()
+                .domain(topAncestors)
+                .range(d3.schemeTableau10); 
+
+            function getTopAncestor(d) {
+                let n = d;
+                while (n.depth > 1) n = n.parent;
+                return n.data.name;
+            }
+
+            // Path generator (elbow)
+            const elbow = d => `
+                M${d.source.y},${d.source.x}
+                V${d.target.x}
+                H${d.target.y}
+            `;
+
+            // Draw links with ancestor-based color
+            g.selectAll(".link")
+                .data(root.links())
+                .join("path")
+                .attr("class", "link")
+                .attr("d", elbow)
+                .attr("stroke", d => colorScale(getTopAncestor(d.target)));
+
+            // Draw nodes
+            const node = g.selectAll(".node")
+                .data(root.descendants())
+                .join("g")
+                .attr("class", "node")
+                .attr("transform", d => `translate(${d.y},${d.x})`)
+                .on("mouseover", (event, d) => {
+                    tooltip.style("opacity", 1)
+                        .html(`<strong>${d.data.name}</strong>`)
+                        .style("left", (event.pageX + 10) + "px")
+                        .style("top", (event.pageY - 10) + "px");
+                })
+                .on("mousemove", (event) => {
+                    tooltip.style("left", (event.pageX + 10) + "px")
+                        .style("top", (event.pageY - 10) + "px");
+                })
+                .on("mouseout", () => tooltip.style("opacity", 0))
+                .on("click", (event, d) => {
+                    window.parent.postMessage({ type: 'topicClicked', topic: d.data.name }, '*');
+                    console.log("Clicked:", d.data.name);
+                });
+
+            node.append("circle")
+                .attr("r", 5)
+                .attr("fill", d => colorScale(getTopAncestor(d)));
+
+            // Labels for leaf nodes
+            const labels = node.filter(d => !d.children)
+                .append("g")
+                .attr("class", "label-group")
+                .attr("transform", "translate(-16,0)");
+
+            labels.append("rect")
+                .attr("class", "label-bg");
+
+            labels.append("text")
+                .attr("class", "label-text")
+                .attr("text-anchor", "end")
+                .attr("alignment-baseline", "middle")
+                .text(d => d.data.name);
+
+            // Resize label backgrounds to text size
+            labels.each(function () {
+                const text = d3.select(this).select("text");
+                const rect = d3.select(this).select("rect");
+                const bbox = text.node().getBBox();
+                rect.attr("x", bbox.x - 6)
+                    .attr("y", bbox.y - 2)
+                    .attr("width", bbox.width + 12)
+                    .attr("height", bbox.height + 4)
+                    .attr("rx", 20)
+                    .attr("ry", 20);
+            });
+        });
+    </script>
+</body>
+
+</html>

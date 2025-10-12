@@ -1,0 +1,624 @@
+{
+  "id": 124,
+  "name": "Robbery with Homicide",
+  "children": [
+    {
+      "id": 122,
+      "name": "Labor Union Certification Election Dispute",
+      "children": [
+        {
+          "id": 118,
+          "name": "VAT Refund and Tax Credit Disputes",
+          "children": [
+            {
+              "id": 114,
+              "name": "VAT Refund and Tax Credit Disputes",
+              "children": [
+                {
+                  "id": 62,
+                  "name": "Constitutionality of International Agreements and Senate Concurrence"
+                },
+                {
+                  "id": 113,
+                  "name": "VAT Refund Disputes and Zero-Rating Claims",
+                  "children": [
+                    {
+                      "id": 98,
+                      "name": "Social Security and Retirement Benefits Disputes",
+                      "children": [
+                        {
+                          "id": 95,
+                          "name": "Social Security and Retirement Benefits",
+                          "children": [
+                            {
+                              "id": 43,
+                              "name": "Retirement Benefits and Gratuity Disputes"
+                            },
+                            {
+                              "id": 91,
+                              "name": "Social Security Contributions and Coverage Disputes",
+                              "children": [
+                                {
+                                  "id": 34,
+                                  "name": "Government Service Insurance System (GSIS) Retirement Benefits and Employee Disputes"
+                                },
+                                {
+                                  "id": 35,
+                                  "name": "Social Security Coverage and Contributions"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "id": 47,
+                          "name": "Labor Disputes and Illegal Dismissal in the Airline Industry"
+                        }
+                      ]
+                    },
+                    {
+                      "id": 102,
+                      "name": "VAT Refund and Tax Credit Disputes",
+                      "children": [
+                        {
+                          "id": 97,
+                          "name": "VAT Refund and Tax Credit Disputes",
+                          "children": [
+                            {
+                              "id": 59,
+                              "name": "Securities Regulation and Corporate Disputes"
+                            },
+                            {
+                              "id": 94,
+                              "name": "VAT Refund and Tax Credit Disputes",
+                              "children": [
+                                {
+                                  "id": 24,
+                                  "name": "Recovery of Ill-Gotten Wealth"
+                                },
+                                {
+                                  "id": 84,
+                                  "name": "Value-Added Tax (VAT) Refund Disputes",
+                                  "children": [
+                                    {
+                                      "id": 78,
+                                      "name": "VAT Refund and Tax Credit Disputes",
+                                      "children": [
+                                        {
+                                          "id": 76,
+                                          "name": "VAT Refund and Tax Credit Disputes",
+                                          "children": [
+                                            {
+                                              "id": 16,
+                                              "name": "Disallowance of Allowances and Benefits by the Commission on Audit"
+                                            },
+                                            {
+                                              "id": 12,
+                                              "name": "VAT Refund and Tax Credit Disputes"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "id": 19,
+                                          "name": "Eminent Domain and Expropriation for Power Transmission Projects"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "id": 27,
+                                      "name": "Construction Contract Disputes and Arbitration Awards"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "id": 30,
+                          "name": "Violation of the Bouncing Checks Law"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 106,
+              "name": "Legal Interest Rates and Computation in Monetary Claims and Damages",
+              "children": [
+                {
+                  "id": 86,
+                  "name": "Airline Passenger Rights and Damages Claims",
+                  "children": [
+                    {
+                      "id": 33,
+                      "name": "Award of Damages and Attorney's Fees"
+                    },
+                    {
+                      "id": 41,
+                      "name": "Airline Contract Breach and Passenger Damages"
+                    }
+                  ]
+                },
+                {
+                  "id": 55,
+                  "name": "Interest Computation and Legal Obligations in Loan and Forbearance Cases"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 120,
+          "name": "Unfair Labor Practice and Certification Election Dispute",
+          "children": [
+            {
+              "id": 119,
+              "name": "Labor Relations and Unfair Labor Practices",
+              "children": [
+                {
+                  "id": 112,
+                  "name": "Correction of Civil Registry Entries and Declaration of Nullity of Marriage",
+                  "children": [
+                    {
+                      "id": 61,
+                      "name": "Spousal and Child Support Disputes"
+                    },
+                    {
+                      "id": 101,
+                      "name": "Correction and Nullification of Civil Registry Entries",
+                      "children": [
+                        {
+                          "id": 82,
+                          "name": "Correction and Cancellation of Civil Registry Entries",
+                          "children": [
+                            {
+                              "id": 21,
+                              "name": "Correction of Civil Registry Entries"
+                            },
+                            {
+                              "id": 18,
+                              "name": "Declaration of Nullity of Marriage Based on Psychological Incapacity"
+                            }
+                          ]
+                        },
+                        {
+                          "id": 58,
+                          "name": "Bigamy and Marriage Nullification"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": 111,
+                  "name": "Labor Union Election Dispute and Administrative Complaint Against a Judge",
+                  "children": [
+                    {
+                      "id": 90,
+                      "name": "Administrative Misconduct and Professional Malpractice",
+                      "children": [
+                        {
+                          "id": 75,
+                          "name": "Workmen's Compensation Claims and Liability",
+                          "children": [
+                            {
+                              "id": 71,
+                              "name": "Negligence in Cargo Handling and Transportation",
+                              "children": [
+                                {
+                                  "id": 10,
+                                  "name": "Cargo Loss and Liability Claims Against Port Operators"
+                                },
+                                {
+                                  "id": 11,
+                                  "name": "Vehicular Accidents and Liability"
+                                }
+                              ]
+                            },
+                            {
+                              "id": 9,
+                              "name": "Workmen's Compensation Claims and Appeals"
+                            }
+                          ]
+                        },
+                        {
+                          "id": 68,
+                          "name": "Judicial Misconduct and Administrative Complaints",
+                          "children": [
+                            {
+                              "id": 66,
+                              "name": "Gross Misconduct and Administrative Charges Against a Judge",
+                              "children": [
+                                {
+                                  "id": 5,
+                                  "name": "Lawyer Misconduct and Disciplinary Cases"
+                                },
+                                {
+                                  "id": 65,
+                                  "name": "Misconduct and Disciplinary Actions Against Court Officials and Employees",
+                                  "children": [
+                                    {
+                                      "id": 63,
+                                      "name": "Judicial Misconduct and Corruption",
+                                      "children": [
+                                        {
+                                          "id": 1,
+                                          "name": "Judicial Misconduct and Administrative Charges"
+                                        },
+                                        {
+                                          "id": 2,
+                                          "name": "Land Ownership and Lease Disputes"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "id": 3,
+                                      "name": "Labor Disputes and Employee Termination"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "id": 67,
+                              "name": "Election Protest and Recount",
+                              "children": [
+                                {
+                                  "id": 7,
+                                  "name": "Appeal Procedures and Default Orders"
+                                },
+                                {
+                                  "id": 6,
+                                  "name": "Election Protest and Canvassing Disputes"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": 107,
+                      "name": "Naturalization and Citizenship Disputes",
+                      "children": [
+                        {
+                          "id": 99,
+                          "name": "Naturalization and Citizenship Applications",
+                          "children": [
+                            {
+                              "id": 44,
+                              "name": "Bail Bond Forfeiture and Surety Liability"
+                            },
+                            {
+                              "id": 81,
+                              "name": "Naturalization and Citizenship Requirements",
+                              "children": [
+                                {
+                                  "id": 22,
+                                  "name": "Customs Seizure and Forfeiture Proceedings"
+                                },
+                                {
+                                  "id": 73,
+                                  "name": "Naturalization and Citizenship Disputes",
+                                  "children": [
+                                    {
+                                      "id": 72,
+                                      "name": "Naturalization and Citizenship Disputes",
+                                      "children": [
+                                        {
+                                          "id": 8,
+                                          "name": "Naturalization and Citizenship Disputes"
+                                        },
+                                        {
+                                          "id": 13,
+                                          "name": "Income Tax Deficiency Assessments and Collection"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "id": 14,
+                                      "name": "Termination of Civil Service Employees"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "id": 48,
+                          "name": "Search and Seizure Violations"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 115,
+              "name": "Public Service Commission and Franchise Operations",
+              "children": [
+                {
+                  "id": 103,
+                  "name": "Public Utility Regulation and Certification",
+                  "children": [
+                    {
+                      "id": 69,
+                      "name": "Public Transportation Franchise Disputes",
+                      "children": [
+                        {
+                          "id": 45,
+                          "name": "Issuance of Certificate of Public Convenience for Ice Plant Operations"
+                        },
+                        {
+                          "id": 15,
+                          "name": "Public Transportation Franchise and Certificate Disputes"
+                        }
+                      ]
+                    },
+                    {
+                      "id": 53,
+                      "name": "Telecommunications Franchise and Regulatory Compliance"
+                    }
+                  ]
+                },
+                {
+                  "id": 108,
+                  "name": "Trademark Registration and Natural Resource Disputes",
+                  "children": [
+                    {
+                      "id": 105,
+                      "name": "Mining Rights and Natural Resources Disputes",
+                      "children": [
+                        {
+                          "id": 57,
+                          "name": "Dispute Over Waterworks and Sewerage System Ownership and Control"
+                        },
+                        {
+                          "id": 100,
+                          "name": "Trademark Infringement and Unfair Competition",
+                          "children": [
+                            {
+                              "id": 96,
+                              "name": "Mining Patent and Natural Resources Dispute",
+                              "children": [
+                                {
+                                  "id": 52,
+                                  "name": "Timber Concession and Licensing Disputes"
+                                },
+                                {
+                                  "id": 92,
+                                  "name": "Trademark Registration and Unfair Competition",
+                                  "children": [
+                                    {
+                                      "id": 32,
+                                      "name": "Fishpond and Water Rights Disputes"
+                                    },
+                                    {
+                                      "id": 88,
+                                      "name": "Trademark and Mining Rights Dispute",
+                                      "children": [
+                                        {
+                                          "id": 31,
+                                          "name": "Mining Rights and Claims Dispute"
+                                        },
+                                        {
+                                          "id": 17,
+                                          "name": "Trademark Registration and Unfair Competition Dispute"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "id": 46,
+                              "name": "Land Ownership Dispute in Quezon City"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": 56,
+                      "name": "Sugarcane Milling and Land Rights Disputes"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 123,
+      "name": "Robbery with Multiple Homicide and Physical Injuries",
+      "children": [
+        {
+          "id": 121,
+          "name": "Treason and Opium Law Violations",
+          "children": [
+            {
+              "id": 117,
+              "name": "Collaboration with Japanese Forces and Treason",
+              "children": [
+                {
+                  "id": 116,
+                  "name": "Fire Insurance Policy Disputes and Claims",
+                  "children": [
+                    {
+                      "id": 85,
+                      "name": "Insurance Policy Disputes",
+                      "children": [
+                        {
+                          "id": 51,
+                          "name": "Life Insurance Policy Disputes"
+                        },
+                        {
+                          "id": 49,
+                          "name": "Insurance Claim Disputes"
+                        }
+                      ]
+                    },
+                    {
+                      "id": 109,
+                      "name": "Procedural Rules for Filing Bills of Exceptions and Motions for New Trials",
+                      "children": [
+                        {
+                          "id": 87,
+                          "name": "Timeliness of Bill of Exceptions and Procedural Compliance in Civil Cases",
+                          "children": [
+                            {
+                              "id": 42,
+                              "name": "Timeliness of Filing Bills of Exceptions in Legal Proceedings"
+                            },
+                            {
+                              "id": 50,
+                              "name": "Procedural Errors in Civil Litigation"
+                            }
+                          ]
+                        },
+                        {
+                          "id": 54,
+                          "name": "Customs Duties and Tariff Classification Disputes"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": 104,
+                  "name": "Treason and Collaboration with Enemy Forces",
+                  "children": [
+                    {
+                      "id": 77,
+                      "name": "Probate and Validity of Wills",
+                      "children": [
+                        {
+                          "id": 37,
+                          "name": "Estate Partition and Inheritance Disputes"
+                        },
+                        {
+                          "id": 25,
+                          "name": "Probate and Validity of Wills"
+                        }
+                      ]
+                    },
+                    {
+                      "id": 23,
+                      "name": "Collaboration with Enemy Forces During World War II"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 93,
+              "name": "Opium Possession and Related Crimes",
+              "children": [
+                {
+                  "id": 80,
+                  "name": "Opium Law Violations and Abduction",
+                  "children": [
+                    {
+                      "id": 26,
+                      "name": "Opium Possession and Trafficking Violations"
+                    },
+                    {
+                      "id": 79,
+                      "name": "Bandolerismo and Abduction Crimes",
+                      "children": [
+                        {
+                          "id": 40,
+                          "name": "Abduction and Sexual Assault of Minors"
+                        },
+                        {
+                          "id": 38,
+                          "name": "Bandolerismo and Brigandage Cases"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": 60,
+                  "name": "Arson and Criminal Liability"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 110,
+          "name": "Robbery with Homicide and Rape",
+          "children": [
+            {
+              "id": 89,
+              "name": "Robbery with Homicide and Multiple Frustrated Homicide",
+              "children": [
+                {
+                  "id": 28,
+                  "name": "Illegal Possession of Firearms and Ammunition"
+                },
+                {
+                  "id": 83,
+                  "name": "Murder and Frustrated Murder",
+                  "children": [
+                    {
+                      "id": 20,
+                      "name": "Illegal Recruitment and Estafa in Large Scale"
+                    },
+                    {
+                      "id": 70,
+                      "name": "Murder and Attempted Murder",
+                      "children": [
+                        {
+                          "id": 4,
+                          "name": "Illegal Sale and Possession of Dangerous Drugs"
+                        },
+                        {
+                          "id": 64,
+                          "name": "Robbery with Homicide and Murder Cases",
+                          "children": [
+                            {
+                              "id": 0,
+                              "name": "Murder and Rape Convictions and Penalties"
+                            },
+                            {
+                              "id": 36,
+                              "name": "Robbery with Homicide"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 74,
+              "name": "Child Abuse and Trafficking",
+              "children": [
+                {
+                  "id": 39,
+                  "name": "Qualified Trafficking in Persons"
+                },
+                {
+                  "id": 29,
+                  "name": "Child Abuse and Exploitation"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

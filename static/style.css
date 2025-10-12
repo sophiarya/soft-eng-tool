@@ -1105,6 +1105,11 @@ details[open]>summary .chevron {
     cursor: pointer;
 }
 
+.btn-view-hierarchy:hover {
+    color: #13B670;
+    border: 1.74px solid #52e9a2;
+}
+
 .btn-view-cases {
     border-radius: 11.7px;
     background: #13B670;
@@ -1113,6 +1118,10 @@ details[open]>summary .chevron {
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
     cursor: pointer;
+}
+
+.btn-view-cases:hover {
+    background: #1a6440;
 }
 
 .topic-hierarchy-card {
