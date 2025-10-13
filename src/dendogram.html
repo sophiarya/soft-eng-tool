@@ -276,55 +276,100 @@
     const closePanelBtn = document.getElementById("close-panel");
     const topicLabel = document.getElementById("selected-topic-label");
     const docsList = document.getElementById("relevant-docs-list");
-
+  
     // --- Mock related docs 
     const mockDocs = {
-      
+      "Liability of Public Officers": [
+        {
+          case_number: "G.R. No. 190356",
+          case_title: "Civil Service Commission v. Salas (2013)",
+          case_link: "https://lawphil.net/judjuris/juri2013/jan2013/gr_190356_2013.html"
+        },
+        {
+          case_number: "G.R. No. 212694",
+          case_title: "Office of the Ombudsman v. Coronel (2017)",
+          case_link: "https://lawphil.net/judjuris/juri2017/jan2017/gr_212694_2017.html"
+        },
+        {
+          case_number: "G.R. No. 191253",
+          case_title: "Civil Service Commission v. Maala (2015)",
+          case_link: "https://lawphil.net/judjuris/juri2015/may2015/gr_191253_2015.html"
+        }
+      ],
+      "Administrative Negligence": [
+        {
+          case_number: "G.R. No. 205800",
+          case_title: "Re: Gross Negligence in the Performance of Duty (2020)",
+          case_link: "https://lawphil.net/judjuris/juri2020/jun2020/gr_205800_2020.html"
+        },
+        {
+          case_number: "G.R. No. 213421",
+          case_title: "Office of the Court Administrator v. Tolentino (2018)",
+          case_link: "https://lawphil.net/judjuris/juri2018/jul2018/gr_213421_2018.html"
+        }
+      ],
+      "Criminal Negligence": [
+        {
+          case_number: "G.R. No. 233539",
+          case_title: "People v. Reyes (2021)",
+          case_link: "https://lawphil.net/judjuris/juri2021/feb2021/gr_233539_2021.html"
+        },
+        {
+          case_number: "G.R. No. 197557",
+          case_title: "People v. Beltran (2019)",
+          case_link: "https://lawphil.net/judjuris/juri2019/sep2019/gr_197557_2019.html"
+        },
+        {
+          case_number: "G.R. No. 187745",
+          case_title: "People v. Tiongson (2014)",
+          case_link: "https://lawphil.net/judjuris/juri2014/jun2014/gr_187745_2014.html"
+        }
+      ]
     };
-
+  
     closePanelBtn.addEventListener("click", () => {
       rightPanel.classList.remove("active");
     });
-
+  
     d3.json("../static/topic_hierarchy.json").then(data => {
       const width = 2200;
       const height = 1600;
-
+  
       const svg = d3.select("#dendrogram").attr("viewBox", [0, 0, width, height]);
       const g = svg.append("g");
-
+  
       const zoom = d3.zoom()
         .scaleExtent([0.4, 2.5])
         .on("zoom", (event) => g.attr("transform", event.transform));
       svg.call(zoom);
-
+  
       d3.select("#zoom_in").on("click", () => svg.transition().call(zoom.scaleBy, 1.2));
       d3.select("#zoom_out").on("click", () => svg.transition().call(zoom.scaleBy, 0.8));
-
+  
       const root = d3.hierarchy(data);
       const tree = d3.cluster().size([height - 200, width - 800]).separation((a, b) => (a.parent === b.parent ? 6 : 8));
       tree(root);
-
+  
       root.descendants().forEach(d => d.y = width - d.y - 600);
-
+  
       const topAncestors = root.children ? root.children.map(d => d.data.name) : [root.data.name];
       const colorScale = d3.scaleOrdinal().domain(topAncestors).range(d3.schemeTableau10);
-
+  
       function getTopAncestor(d) {
         let n = d;
         while (n.depth > 1) n = n.parent;
         return n.data.name;
       }
-
+  
       const elbow = d => `M${d.source.y},${d.source.x}V${d.target.x}H${d.target.y}`;
-
+  
       g.selectAll(".link")
         .data(root.links())
         .join("path")
         .attr("class", "link")
         .attr("d", elbow)
         .attr("stroke", d => colorScale(getTopAncestor(d.target)));
-
+  
       const node = g.selectAll(".node")
         .data(root.descendants())
         .join("g")
@@ -343,25 +388,25 @@
         .on("click", (event, d) => {
           showRelevantDocs(d.data.name);
         });
-
+  
       node.append("circle")
         .attr("r", 6)
         .attr("fill", d => colorScale(getTopAncestor(d)))
         .style("filter", "drop-shadow(0 0 6px rgba(118, 93, 255, 0.45))")
         .style("transition", "all 0.25s ease");
-
+  
       const labels = node.filter(d => !d.children)
         .append("g")
         .attr("class", "label-group")
         .attr("transform", "translate(-16,0)");
-
+  
       labels.append("rect").attr("class", "label-bg");
       labels.append("text")
         .attr("class", "label-text")
         .attr("text-anchor", "end")
         .attr("alignment-baseline", "middle")
         .text(d => d.data.name);
-
+  
       labels.each(function () {
         const text = d3.select(this).select("text");
         const rect = d3.select(this).select("rect");
@@ -373,20 +418,19 @@
           .attr("rx", 20)
           .attr("ry", 20);
       });
-
-      // Center the dendrogram perfectly and keep it centered
+  
       const bounds = g.node().getBBox();
       const scale = Math.min(1.2, Math.max(0.6, 1 / Math.max(bounds.width / width, bounds.height / height)));
       const translateX = width / 2 - scale * (bounds.x + bounds.width / 2);
       const translateY = height / 2 - scale * (bounds.y + bounds.height / 2);
-
+  
       svg.call(zoom.transform, d3.zoomIdentity.translate(translateX, translateY).scale(scale));
     });
-
+  
     function showRelevantDocs(topicName) {
       topicLabel.textContent = topicName;
       docsList.innerHTML = "";
-
+  
       const docs = mockDocs[topicName];
       if (docs && docs.length > 0) {
         docs.forEach(doc => {
@@ -400,9 +444,9 @@
       } else {
         docsList.innerHTML = `<p class="no-docs">No representative documents available for this topic.</p>`;
       }
-
+  
       rightPanel.classList.add("active");
     }
-  </script>
+  </script>  
 </body>
 </html>

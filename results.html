@@ -126,11 +126,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="topic-grid flex flex-col gap-6">
+                    <div class="top-topics-container">
+                        <div class="topic-grid flex flex-col gap-3">
                         {% for t in top_topics %}
-                        <div class="topic-content-card">
+                        <div class="topic-content-card" data-topic-id="{{ t.id }}">
                             <div class="topic-content-wrapper">
-                                <div class="flex items-center justify-between w-full">
+                                <div class="flex items-center justify-between w-full topic-card-header cursor-pointer" data-topic-id="{{ t.id }}">
                                     <h2 class="topic-title mr-3 truncate">{{ t.name }}</h2>
                                     <div class="match-score ml-3 flex-shrink-0 text-right">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none">
@@ -148,14 +149,18 @@
                                         <span class="text-sm text-brand-gray-text">No keywords available.</span>
                                     {% endif %}
                                 </div>
+                                <div class="card-actions hidden mt-4 flex w-full justify-center" data-topic-id="{{ t.id }}">
+                                    <div class="closest-match-buttons">
+                                        <button class="btn-view-hierarchy" data-topic-id="{{ t.id }}">View Full Hierarchy</button>
+                                        <button class="btn-view-cases" data-topic-id="{{ t.id }}">View Related Cases</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         {% endfor %}
+                        </div>
                     </div>
-                    <div class="closest-match-buttons">
-                        <button class="btn-view-hierarchy">View Full Hierarchy</button>
-                        <button class="btn-view-cases">View Related Cases</button>
-                    </div>
+                    <!-- Removed global buttons; per-card buttons appear when selected -->
                 </section>
                 <section class="topic-hierarchy-card">
                     <div class="dendogram-header-text">
@@ -343,23 +348,28 @@
     <script id="hierarchy-data" type="application/json">{{ hierarchy_json | safe }}</script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const hierarchyButton = document.querySelector('.btn-view-hierarchy');
-            const casesButton = document.querySelector('.btn-view-cases');
-
             const hierarchySection = document.querySelector('.topic-hierarchy-card');
             const docsSection = document.getElementById('relevant-docs');
 
-            if (hierarchyButton && hierarchySection) {
-                hierarchyButton.addEventListener('click', () => {
-                    hierarchySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Click on per-card hierarchy button
+            document.querySelectorAll('.btn-view-hierarchy').forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (hierarchySection) {
+                        hierarchySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 });
-            }
+            });
 
-            if (casesButton && docsSection) {
-                casesButton.addEventListener('click', () => {
-                    docsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Click on per-card cases button
+            document.querySelectorAll('.btn-view-cases').forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (docsSection) {
+                        docsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 });
-            }
+            });
         });
 
         document.querySelectorAll('.tooltip-container').forEach(container => {
@@ -442,6 +452,8 @@
             const prevButton = document.getElementById('docs-prev-btn');
             const nextButton = document.getElementById('docs-next-btn');
             const summaries = Array.from(document.querySelectorAll('.topic-summary'));
+            const cardHeaders = Array.from(document.querySelectorAll('.topic-card-header'));
+            const topicCards = Array.from(document.querySelectorAll('.topic-content-card'));
 
             if (!docsSection || !docsContainer || !topicLabel) {
                 return;
@@ -452,6 +464,7 @@
                 default: ['bg-blue-50', 'ring', 'ring-blue-200', 'rounded-xl'],
                 closest: ['bg-emerald-50', 'ring', 'ring-emerald-200', 'rounded-xl'],
             };
+            const SELECTED_CARD_CLASSES = ['ring', 'ring-blue-200', 'bg-white'];
             let activeSummary = null;
             let currentDocs = [];
             let currentPage = 0;
@@ -462,6 +475,13 @@
                 }
                 activeSummary.classes.forEach((cls) => activeSummary.element.classList.remove(cls));
                 activeSummary = null;
+            };
+
+            const hideAllCardActions = () => {
+                document.querySelectorAll('.card-actions').forEach((el) => el.classList.add('hidden'));
+                topicCards.forEach((card) => {
+                    SELECTED_CARD_CLASSES.forEach((cls) => card.classList.remove(cls));
+                });
             };
 
             const highlightSummary = (summaryEl, node) => {
@@ -567,10 +587,29 @@
                 currentDocs = Array.isArray(node.representative_docs) ? node.representative_docs : [];
                 renderDocsPage(0);
 
+                // Show actions for matching top topic card, if present, and expand card height
+                hideAllCardActions();
+                const cardActions = document.querySelector(`.card-actions[data-topic-id="${topicId}"]`);
+                const card = document.querySelector(`.topic-content-card[data-topic-id="${topicId}"]`);
+                if (cardActions && card) {
+                    cardActions.classList.remove('hidden');
+                    card.classList.add('expanded');
+                    SELECTED_CARD_CLASSES.forEach((cls) => card.classList.add(cls));
+                }
+
                 if (options.scroll) {
                     docsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             };
+            // Clicking top topic cards selects that topic
+            cardHeaders.forEach((header) => {
+                header.addEventListener('click', () => {
+                    const topicId = header.dataset.topicId;
+                    if (topicId) {
+                        selectTopic(topicId, { scroll: false });
+                    }
+                });
+            });
 
             if (prevButton) {
                 prevButton.addEventListener('click', () => {

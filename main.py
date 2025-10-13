@@ -159,9 +159,9 @@ async def search_topics(request: Request, search_term: str = Form(...)):
 
     # Mock top-3 topics with similarity scores for UI display
     top_topics = [
-        {"name": node_index.get("1", {}).get("name", "Topic 1"), "top_words": node_index.get("1", {}).get("top_words", []), "score": 0.93},
-        {"name": node_index.get("2", {}).get("name", "Topic 2"), "top_words": node_index.get("2", {}).get("top_words", []), "score": 0.87},
-        {"name": node_index.get("3", {}).get("name", "Topic 3"), "top_words": node_index.get("3", {}).get("top_words", []), "score": 0.81},
+        {"id": "1", "name": node_index.get("1", {}).get("name", "Topic 1"), "top_words": node_index.get("1", {}).get("top_words", []), "score": 0.93},
+        {"id": "2", "name": node_index.get("2", {}).get("name", "Topic 2"), "top_words": node_index.get("2", {}).get("top_words", []), "score": 0.87},
+        {"id": "3", "name": node_index.get("3", {}).get("name", "Topic 3"), "top_words": node_index.get("3", {}).get("top_words", []), "score": 0.81},
     ]
 
     context = {

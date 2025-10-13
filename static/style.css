@@ -1090,13 +1090,19 @@ details[open]>summary .chevron {
 
 .topic-content-card {
     display: flex;
-    height: 138px;
+    min-height: 138px;
+    height: auto;
     padding: 36px 36px 36px 41px;
-    justify-content: flex-end;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: stretch;
     border-radius: 8px;
     border: 1px solid #A8F2C9;
     background: #FFF;
+    overflow: visible;
+}
+
+.topic-content-card.expanded {
+    height: auto;
 }
 
 .topic-content-wrapper {
@@ -1104,7 +1110,7 @@ details[open]>summary .chevron {
     flex-direction: column;
     align-items: flex-start;
     gap: 13px;
-    width: 990px;
+    width: 100%;
 }
 
 .topic-title {
