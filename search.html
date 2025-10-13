@@ -281,7 +281,7 @@
             </div>
         </footer>
         <!-- Page Loader -->
-        <div id="page-loader" class="fixed inset-0 z-50 hidden items-center justify-center">
+        <div id="page-loader" class="fixed inset-0 z-50 hidden flex items-center justify-center">
             <div class="absolute inset-0 bg-white/50 backdrop-blur-sm"></div>
             <div class="relative z-10">
                 <div class="spinner"></div>
@@ -803,6 +803,18 @@
 
         document.getElementById('search-form').addEventListener('submit', function (e) {
             e.preventDefault();
+
+            const queryField = this.querySelector('#search-query');
+            const queryValue = queryField ? queryField.value.trim() : '';
+            const wordCount = queryValue ? queryValue.split(/\s+/).filter(Boolean).length : 0;
+
+            if (wordCount < 5) {
+                alert('Please enter at least 5 words in your query before searching.');
+                if (queryField) {
+                    queryField.focus();
+                }
+                return;
+            }
 
             const pageLoader = document.getElementById('page-loader');
             if (pageLoader) {

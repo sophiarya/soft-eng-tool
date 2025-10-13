@@ -66,7 +66,7 @@
                     </div>
                 </header>
                 <div class="search-container">
-                    <form action="/search" method="get" class="search-form">
+                    <form id="results-search-form" action="/search" method="post" class="search-form">
                         <button type="submit" class="search-button">
                             <svg xmlns="http://www.w3.org/2000/svg" class="search-icon" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
@@ -74,7 +74,7 @@
                                     d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
                             </svg>
                         </button>
-                        <input type="text" name="q" value="[content]" placeholder="Enter legal topic or keyword" class="search-input" />
+                        <input type="text" name="search_term" value="{{ search_term or '' }}" placeholder="Enter legal topic or keyword" class="search-input" required />
                     </form>
                 </div>
                 <section class="closest-match-card">
@@ -350,6 +350,24 @@
         document.addEventListener('DOMContentLoaded', () => {
             const hierarchySection = document.querySelector('.topic-hierarchy-card');
             const docsSection = document.getElementById('relevant-docs');
+            const searchForm = document.getElementById('results-search-form');
+
+            if (searchForm) {
+                searchForm.addEventListener('submit', (event) => {
+                    const queryField = searchForm.querySelector('input[name="search_term"]');
+                    const queryValue = queryField ? queryField.value.trim() : '';
+                    const wordCount = queryValue ? queryValue.split(/\s+/).filter(Boolean).length : 0;
+
+                    if (wordCount < 5) {
+                        event.preventDefault();
+                        alert('Please enter at least 5 words in your query before searching.');
+                        if (queryField) {
+                            queryField.focus();
+                        }
+                        return;
+                    }
+                });
+            }
 
             // Click on per-card hierarchy button
             document.querySelectorAll('.btn-view-hierarchy').forEach((btn) => {

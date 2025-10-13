@@ -163,11 +163,50 @@
     flex-direction: column;
     border-top: 1px solid #eee;
     margin-top: 1rem;
+    padding-top: 1rem;
     }
 
     #relevant-docs-list div {
-    padding: 0.75rem 0;
+    padding: 0.8rem 0;
     border-bottom: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+    }
+
+    #relevant-docs-list div:first-child {
+    padding-top: 0;
+    }
+
+    #relevant-docs-list p {
+    margin: 0;
+    }
+
+    #top-words-section {
+    margin-bottom: 1.5rem;
+    }
+
+    #top-words-section h4 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1rem;
+    color: #444;
+    }
+
+    #top-words-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    }
+
+    .top-word-chip {
+    display: inline-block;
+    padding: 0.35rem 0.6rem;
+    background: #eef0ff;
+    border: 1px solid #c9ceff;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    color: #4a3aff;
     }
 
     #relevant-docs-list a {
@@ -263,6 +302,12 @@
           Relevant Documents for
           <span class="primary-color" id="selected-topic-label">—</span>
         </h3>
+        <div id="top-words-section">
+          <h4>Top Words</h4>
+          <div id="top-words-list">
+            <p class="no-docs">Select a topic to view top words.</p>
+          </div>
+        </div>
         <div id="relevant-docs-list">
           <p class="no-docs">Select a topic to view related documents.</p>
         </div>
@@ -276,17 +321,13 @@
     const closePanelBtn = document.getElementById("close-panel");
     const topicLabel = document.getElementById("selected-topic-label");
     const docsList = document.getElementById("relevant-docs-list");
-  
-    // --- Mock related docs 
-    const mockDocs = {
-      
-    };
+    const topWordsList = document.getElementById("top-words-list");
   
     closePanelBtn.addEventListener("click", () => {
       rightPanel.classList.remove("active");
     });
   
-    d3.json("../static/topic_hierarchy.json").then(data => {
+    d3.json("../static/topic_hierarchy_v2.json").then(data => {
       const width = 2200;
       const height = 1600;
   
@@ -331,20 +372,27 @@
         .attr("class", "node")
         .attr("transform", d => `translate(${d.y},${d.x})`)
         .on("mouseover", (event, d) => {
+          if (d.depth === 0) return;
           tooltip.style("opacity", 1)
             .html(`<strong>${d.data.name}</strong>`)
             .style("left", (event.pageX + 10) + "px")
             .style("top", (event.pageY - 10) + "px");
         })
-        .on("mousemove", (event) => {
+        .on("mousemove", (event, d) => {
+          if (d.depth === 0) return;
           tooltip.style("left", (event.pageX + 10) + "px").style("top", (event.pageY - 10) + "px");
         })
-        .on("mouseout", () => tooltip.style("opacity", 0))
+        .on("mouseout", (event, d) => {
+          if (d.depth === 0) return;
+          tooltip.style("opacity", 0);
+        })
         .on("click", (event, d) => {
-          showRelevantDocs(d.data.name);
+          if (d.depth === 0) return;
+          showRelevantDocs(d.data);
         });
   
-      node.append("circle")
+      node.filter(d => d.depth > 0)
+        .append("circle")
         .attr("r", 6)
         .attr("fill", d => colorScale(getTopAncestor(d)))
         .style("filter", "drop-shadow(0 0 6px rgba(118, 93, 255, 0.45))")
@@ -382,11 +430,25 @@
       svg.call(zoom.transform, d3.zoomIdentity.translate(translateX, translateY).scale(scale));
     });
   
-    function showRelevantDocs(topicName) {
+    function showRelevantDocs(topicData) {
+      const topicName = topicData?.name ?? "—";
       topicLabel.textContent = topicName;
+
+      const topWords = Array.isArray(topicData?.top_words) ? topicData.top_words : [];
+      topWordsList.innerHTML = "";
+      if (topWords.length > 0) {
+        topWords.forEach(word => {
+          const span = document.createElement("span");
+          span.className = "top-word-chip";
+          span.textContent = word;
+          topWordsList.appendChild(span);
+        });
+      } else {
+        topWordsList.innerHTML = `<p class="no-docs">No top words available for this topic.</p>`;
+      }
+
+      const docs = Array.isArray(topicData?.representative_docs) ? topicData.representative_docs : [];
       docsList.innerHTML = "";
-  
-      const docs = mockDocs[topicName];
       if (docs && docs.length > 0) {
         docs.forEach(doc => {
           const div = document.createElement("div");

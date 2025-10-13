@@ -25,12 +25,6 @@ templates = Jinja2Templates(directory=".")
 async def read_root(request: Request):
     return templates.TemplateResponse("search.html", {"request": request})
 
-API_BASE_URL = os.getenv(
-    "JURISTOPIC_API_BASE",
-    "https://markmcrg--bertopic-search-service-fastapi-app.modal.run",
-)
-API_KEY = os.getenv("JURISTOPIC_API_KEY")
-
 LOG_TIMEZONE = datetime.timezone(datetime.timedelta(hours=8))
 
 def log_with_timestamp(message: str) -> None:
@@ -55,7 +49,7 @@ async def warmup_search(payload: WarmupRequest):
 
     try:
         response = requests.get(
-            f"{API_BASE_URL}/healthz",
+            f"https://markemjuris--bertopic-search-service-fastapi-app.modal.run/healthz",
             timeout=120,
         )
         response.raise_for_status()
@@ -123,8 +117,6 @@ async def search_topics(request: Request, search_term: str = Form(...)):
     print(f"[LOG] Received search_term: {search_term}")
 
     headers = {"Content-Type": "application/json"}
-    if API_KEY:
-        headers["x-api-key"] = API_KEY
 
     payload = {
         "query": search_term,
@@ -135,7 +127,7 @@ async def search_topics(request: Request, search_term: str = Form(...)):
 
     try:
         response = requests.post(
-            f"{API_BASE_URL}/search",
+            f"https://markemjuris--bertopic-search-service-fastapi-app.modal.run/search",
             json=payload,
             headers=headers,
             timeout=300,
@@ -169,7 +161,7 @@ async def search_topics(request: Request, search_term: str = Form(...)):
         "selected_topic_id": selected_topic_id,
         "selected_topic_name": selected_topic.get("name", ""),
         "selected_docs": selected_topic.get("representative_docs", []),
-        "top_topics": top_topics,
+        # "top_topics": top_topics,
         "hierarchy_json": json.dumps(hierarchy),
     }
 
