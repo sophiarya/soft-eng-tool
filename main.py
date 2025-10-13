@@ -54,7 +54,10 @@ async def warmup_search(payload: WarmupRequest):
     log_with_timestamp(f"{log_message}, calling /healthz...")
 
     try:
-        response = requests.get(f"{API_BASE_URL}/healthz", timeout=120)
+        response = requests.get(
+            f"{API_BASE_URL}/healthz",
+            timeout=120,
+        )
         response.raise_for_status()
     except requests.RequestException as exc:
         detail = str(exc)
@@ -69,6 +72,8 @@ async def warmup_search(payload: WarmupRequest):
     return {"status": "ok"}
 
 def _build_hierarchy(result_tree: Dict[str, Any]) -> Tuple[List[Dict[str, Any]], List[str], str]:
+    """Return hierarchy-ready data, IDs to auto-open, and selected topic ID."""
+
     closest_paths: List[List[str]] = []
 
     def build_node(node_id: str, node_data: Dict[str, Any], ancestors: List[str]) -> Dict[str, Any]:
@@ -92,15 +97,15 @@ def _build_hierarchy(result_tree: Dict[str, Any]) -> Tuple[List[Dict[str, Any]],
 
     hierarchy: List[Dict[str, Any]] = []
     for root_id, root_data in (result_tree or {}).items():
-        hierarchy.append(build_node(str(root_id), root_data, []))
-
+        hierarchy.append(build_node(str(root_id), root_data, []))    
+        
     if not hierarchy:
         raise HTTPException(status_code=502, detail="Empty result returned by topic service")
 
     selected_path = closest_paths[0] if closest_paths else [hierarchy[0]["id"]]
     selected_topic_id = selected_path[-1]
 
-    open_topic_ids = list(dict.fromkeys(selected_path))
+    open_topic_ids = list(dict.fromkeys(selected_path))  # preserve order, unique
     return hierarchy, open_topic_ids, selected_topic_id
 
 def _index_nodes(nodes: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
@@ -117,53 +122,45 @@ def _index_nodes(nodes: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
 async def search_topics(request: Request, search_term: str = Form(...)):
     print(f"[LOG] Received search_term: {search_term}")
 
-    # --- MOCK MODE (No API key needed) ---
-    print("[MOCK] Using local fake response instead of remote topic service.")
-    response_data = {
-        "result": {
-            "1": {
-                "Name": "Liability of Public Officers",
-                "Top_Words": ["negligence", "liability", "public", "employee", "duty"],
-                "Representative_Docs": [
-                    {"case_number": "G.R. 123456", "case_title": "People v. Dela Cruz", "case_link": "#"},
-                    {"case_number": "G.R. 654321", "case_title": "Santos v. Commission", "case_link": "#"}
-                ],
-                "is_closest": True,
-                "children": []
-            },
-            "2": {
-                "Name": "Administrative Negligence",
-                "Top_Words": ["administrative", "disciplinary", "sanction", "civil service"],
-                "Representative_Docs": [
-                    {"case_number": "G.R. 111111", "case_title": "Civil Service v. Reyes", "case_link": "#"}
-                ],
-                "is_closest": False,
-                "children": []
-            },
-            "3": {
-                "Name": "Criminal Negligence",
-                "Top_Words": ["reckless", "imprudence", "criminal", "liability"],
-                "Representative_Docs": [
-                    {"case_number": "G.R. 222222", "case_title": "People v. Santos", "case_link": "#"}
-                ],
-                "is_closest": False,
-                "children": []
-            }
-        }
+    headers = {"Content-Type": "application/json"}
+    if API_KEY:
+        headers["x-api-key"] = API_KEY
+
+    payload = {
+        "query": search_term,
+        "levels_up": 2,
+        "top_n": 1,
+
     }
 
+    try:
+        response = requests.post(
+            f"{API_BASE_URL}/search",
+            json=payload,
+            headers=headers,
+            timeout=300,
+        )
+        response.raise_for_status()
+    except requests.RequestException as exc:
+        print("[ERROR] Topic service request failed:", exc)
+        raise HTTPException(status_code=502, detail="Failed to fetch topics from upstream service") from exc
+
+    try:
+        response_data: Dict[str, Any] = response.json()
+    except ValueError as exc:
+        print("[ERROR] Invalid JSON from topic service:", exc)
+        raise HTTPException(status_code=502, detail="Invalid response from upstream service") from exc
+
     result_tree = response_data.get("result")
+    if result_tree is None:
+        print("[ERROR] Missing 'result' field in response:")
+        pprint.pprint(response_data, indent=2, width=100)
+        raise HTTPException(status_code=502, detail="Unexpected response format from topic service")
+
     hierarchy, open_topic_ids, selected_topic_id = _build_hierarchy(result_tree)
     node_index = _index_nodes(hierarchy)
+
     selected_topic = node_index.get(selected_topic_id, {})
-
-    # Mock top-3 topics with similarity scores for UI display
-    top_topics = [
-        {"id": "1", "name": node_index.get("1", {}).get("name", "Topic 1"), "top_words": node_index.get("1", {}).get("top_words", []), "score": 0.93},
-        {"id": "2", "name": node_index.get("2", {}).get("name", "Topic 2"), "top_words": node_index.get("2", {}).get("top_words", []), "score": 0.87},
-        {"id": "3", "name": node_index.get("3", {}).get("name", "Topic 3"), "top_words": node_index.get("3", {}).get("top_words", []), "score": 0.81},
-    ]
-
     context = {
         "request": request,
         "search_term": search_term,
