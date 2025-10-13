@@ -96,18 +96,10 @@
                                 </div>
                             </div>
                             <h1 class="closest-match-title">
-                                Most Relevant Topic
+                                Most Relevant Topics
                             </h1>
                         </div>
                         <div class="header-right">
-                            <div class="match-score">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none">
-                                    <path
-                                        d="M10.952 4.69086H14.9229M14.9229 4.69086V8.66176M14.9229 4.69086L9.29741 10.3163L5.98833 7.00721L1.68652 11.309"
-                                        stroke="white" stroke-width="1.32363" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                                <span>[content]% Match</span>
-                            </div>
                             <div class="tooltip-container">
                                 <span class="tooltip-icon">?</span>
                                 <div class="tooltip-card">
@@ -134,13 +126,31 @@
                             </div>
                         </div>
                     </div>
-                    <div class="topic-content-card">
-                        <div class="topic-content-wrapper">
-                            <h2 class="topic-title">[content]</h2>
-                            <div class="topic-topwords">
-                                <span class="topwords">[content]</span>
+                    <div class="topic-grid flex flex-col gap-6">
+                        {% for t in top_topics %}
+                        <div class="topic-content-card">
+                            <div class="topic-content-wrapper">
+                                <div class="flex items-center justify-between w-full">
+                                    <h2 class="topic-title mr-3 truncate">{{ t.name }}</h2>
+                                    <div class="match-score ml-3 flex-shrink-0 text-right">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none">
+                                            <path d="M10.952 4.69086H14.9229M14.9229 4.69086V8.66176M14.9229 4.69086L9.29741 10.3163L5.98833 7.00721L1.68652 11.309" stroke="white" stroke-width="1.32363" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                        <span>{{ (t.score * 100) | round(0, 'floor') | int }}% Match</span>
+                                    </div>
+                                </div>
+                                <div class="topic-topwords">
+                                    {% if t.top_words %}
+                                        {% for word in t.top_words[:6] %}
+                                        <span class="topwords">{{ word }}</span>
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="text-sm text-brand-gray-text">No keywords available.</span>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
+                        {% endfor %}
                     </div>
                     <div class="closest-match-buttons">
                         <button class="btn-view-hierarchy">View Full Hierarchy</button>
