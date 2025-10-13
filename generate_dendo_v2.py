@@ -13,7 +13,7 @@ from collections import defaultdict
 # =============================
 # 1) Load CSV
 # =============================
-df = pd.read_csv("helper_df_xlm_final_cleaned.csv")
+df = pd.read_csv("helper_df.csv")
 
 required_cols = {"Node_ID", "Name", "Type", "Top_Words", "Representative_Docs", "Parent_ID"}
 missing = required_cols - set(df.columns)

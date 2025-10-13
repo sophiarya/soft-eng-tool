@@ -117,7 +117,7 @@
     height: 100%;
     background: #fff;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    padding: 2rem;
+    padding: 0.5rem 2rem 2rem;
     overflow-y: auto;
     transform: translateX(100%);
     transition: transform 0.4s ease;
@@ -183,6 +183,12 @@
     margin: 0;
     }
 
+    .doc-probability {
+    font-size: 0.75rem;
+    color: #5b5fa6;
+    font-weight: 500;
+    }
+
     #top-words-section {
     margin-bottom: 1.5rem;
     }
@@ -197,6 +203,57 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+    }
+
+    #probability-summary {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #434168;
+    font-weight: 600;
+    }
+
+    .probability-label {
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    color: #6d6aa6;
+    }
+
+    .probability-badge {
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    background: rgba(92, 95, 166, 0.08);
+    color: #4a3aff;
+    }
+
+    .probability-green {
+    color: #0f7a4f;
+    background: rgba(15, 122, 79, 0.12);
+    border-color: rgba(15, 122, 79, 0.35);
+    }
+
+    .probability-yellow {
+    color: #9c6f1f;
+    background: rgba(255, 201, 84, 0.18);
+    border-color: rgba(236, 179, 71, 0.35);
+    }
+
+    .probability-red {
+    color: #a23a3a;
+    background: rgba(223, 77, 77, 0.18);
+    border-color: rgba(223, 77, 77, 0.35);
+    }
+
+    .probability-low {
+    color: #555;
+    background: rgba(85, 85, 85, 0.08);
+    border-color: rgba(85, 85, 85, 0.25);
     }
 
     .top-word-chip {
@@ -230,14 +287,14 @@
     @media (max-width: 1440px) {
         #right-panel {
             width: 280px;
-            padding: 1.75rem;
+            padding: 1.25rem 1.75rem 1.75rem;
         }
     }
 
     @media (max-width: 1280px) {
         #right-panel {
             width: 260px;
-            padding: 1.5rem;
+            padding: 1.1rem 1.5rem 1.5rem;
         }
         #right-panel h3 {
             font-size: 0.95rem;
@@ -247,7 +304,7 @@
     @media (max-width: 1024px) {
         #right-panel {
             width: 230px;
-            padding: 1.25rem;
+            padding: 1rem 1.25rem 1.25rem;
         }
         #right-panel h3 {
             font-size: 0.9rem;
@@ -257,7 +314,7 @@
     @media (max-width: 768px) {
         #right-panel {
             width: 200px;
-            padding: 1rem;
+            padding: 0.85rem 1rem 1rem;
         }
         #right-panel h3 {
             font-size: 0.85rem;
@@ -275,6 +332,7 @@
             top: auto;
             border-radius: 16px 16px 0 0;
             transform: translateY(100%);
+            padding: 0.75rem 1rem 1.1rem;
         }
         #right-panel.active {
             transform: translateY(0);
@@ -308,6 +366,10 @@
             <p class="no-docs">Select a topic to view top words.</p>
           </div>
         </div>
+        <div id="probability-summary">
+          <span class="probability-label">Average Probability</span>
+          <span id="probability-value" class="probability-badge">—</span>
+        </div>
         <div id="relevant-docs-list">
           <p class="no-docs">Select a topic to view related documents.</p>
         </div>
@@ -322,12 +384,62 @@
     const topicLabel = document.getElementById("selected-topic-label");
     const docsList = document.getElementById("relevant-docs-list");
     const topWordsList = document.getElementById("top-words-list");
+    const probabilitySummary = document.getElementById("probability-summary");
+    const probabilityValue = document.getElementById("probability-value");
+
+    const topicCasesById = new Map();
+    const normalizeText = (value) => (typeof value === "string" ? value.trim() : "");
   
     closePanelBtn.addEventListener("click", () => {
       rightPanel.classList.remove("active");
     });
   
-    d3.json("../static/topic_hierarchy_v2.json").then(data => {
+    Promise.all([
+      d3.json("../static/topic_hierarchy_v2.json"),
+      d3.csv("../static/sc_cases_truncated_final_refit.csv", row => {
+        const probability = parseFloat(row.probability);
+        return {
+          topic: normalizeText(row.topic),
+          case_number: normalizeText(row.case_number),
+          case_title: normalizeText(row.case_title),
+          case_link: normalizeText(row.case_link),
+          probability: Number.isFinite(probability) ? probability : undefined
+        };
+      })
+    ]).then(([data, csvRows]) => {
+      const aggregatedDocs = new Map();
+      csvRows.forEach(row => {
+        const topicId = row.topic;
+        if (!topicId) return;
+        const topicNumber = Number(topicId);
+        if (!Number.isFinite(topicNumber) || topicNumber < 1 || topicNumber > 64) return;
+        if (!Number.isFinite(row.probability) || row.probability === 0) return;
+        const entry = {
+          case_number: row.case_number,
+          case_title: row.case_title,
+          case_link: row.case_link,
+          probability: row.probability
+        };
+        if (!aggregatedDocs.has(topicId)) {
+          aggregatedDocs.set(topicId, []);
+        }
+        aggregatedDocs.get(topicId).push(entry);
+      });
+
+      aggregatedDocs.forEach((docs, topicId) => {
+        const filteredDocs = docs.filter(doc => Number.isFinite(doc.probability) && doc.probability !== 0);
+        if (filteredDocs.length === 0) return;
+        filteredDocs.sort((a, b) => b.probability - a.probability);
+        const average = filteredDocs.reduce((total, doc) => total + doc.probability, 0) / filteredDocs.length;
+        const averagePercent = average * 100;
+        const percentDocs = filteredDocs.map(doc => ({
+          ...doc,
+          probabilityPercent: doc.probability * 100
+        }));
+        const docCount = percentDocs.length;
+        topicCasesById.set(topicId, { docs: percentDocs, averagePercent, docCount });
+      });
+
       const width = 2200;
       const height = 1600;
   
@@ -343,6 +455,7 @@
       d3.select("#zoom_out").on("click", () => svg.transition().call(zoom.scaleBy, 0.8));
   
       const root = d3.hierarchy(data);
+      computeClusterAggregates(root);
       const tree = d3.cluster().size([height - 200, width - 800]).separation((a, b) => (a.parent === b.parent ? 6 : 8));
       tree(root);
   
@@ -428,7 +541,74 @@
       const translateY = height / 2 - scale * (bounds.y + bounds.height / 2);
   
       svg.call(zoom.transform, d3.zoomIdentity.translate(translateX, translateY).scale(scale));
+    }).catch(error => {
+      console.error("Failed to load dendrogram data:", error);
     });
+
+    function getProbabilityBadgeClass(value) {
+      if (value > 80) return "probability-green";
+      if (value > 50) return "probability-yellow";
+      if (value > 30) return "probability-red";
+      return "probability-low";
+    }
+
+    function formatPercentage(value) {
+      if (!Number.isFinite(value)) return "0";
+      return value.toFixed(4).replace(/\.?0+$/, "");
+    }
+
+    function setProbabilitySummary(averagePercent) {
+      if (!Number.isFinite(averagePercent)) {
+        probabilitySummary.style.display = "none";
+        probabilityValue.textContent = "—";
+        probabilityValue.className = "probability-badge";
+        return;
+      }
+      probabilityValue.textContent = `${formatPercentage(averagePercent)}%`;
+      probabilityValue.className = `probability-badge ${getProbabilityBadgeClass(averagePercent)}`;
+      probabilitySummary.style.display = "flex";
+    }
+
+    function computeClusterAggregates(node) {
+      if (!node) return null;
+      const nodeIdRaw = node?.data?.id;
+      const nodeId = nodeIdRaw != null ? String(nodeIdRaw).trim() : null;
+      let stats = nodeId ? topicCasesById.get(nodeId) : null;
+
+      let totalDocs = 0;
+      let weightedSum = 0;
+
+      (node.children || []).forEach(child => {
+        const childStats = computeClusterAggregates(child);
+        if (!childStats) return;
+        const childDocCount = Number(childStats.docCount) || 0;
+        const childAverage = childStats.averagePercent;
+        if (!Number.isFinite(childAverage) || childDocCount <= 0) return;
+        totalDocs += childDocCount;
+        weightedSum += childAverage * childDocCount;
+      });
+
+      if (totalDocs > 0) {
+        const combinedAverage = weightedSum / totalDocs;
+        const docsArray = stats && Array.isArray(stats.docs) ? stats.docs : [];
+        stats = {
+          docs: docsArray,
+          averagePercent: combinedAverage,
+          docCount: totalDocs
+        };
+      }
+
+      if (stats && nodeId) {
+        topicCasesById.set(nodeId, stats);
+        return stats;
+      }
+
+      if (nodeId && topicCasesById.has(nodeId)) {
+        return topicCasesById.get(nodeId);
+      }
+
+      return null;
+    }
   
     function showRelevantDocs(topicData) {
       const topicName = topicData?.name ?? "—";
@@ -447,9 +627,13 @@
         topWordsList.innerHTML = `<p class="no-docs">No top words available for this topic.</p>`;
       }
 
-      const docs = Array.isArray(topicData?.representative_docs) ? topicData.representative_docs : [];
+      const topicId = topicData?.id != null ? String(topicData.id).trim() : "";
+      const topicStats = topicCasesById.get(topicId);
+      const useCsvDocs = topicStats && Array.isArray(topicStats.docs) && topicStats.docs.length > 0;
+
       docsList.innerHTML = "";
-      if (docs && docs.length > 0) {
+      if (useCsvDocs) {
+        const docs = topicStats.docs.slice(0, 15);
         docs.forEach(doc => {
           const div = document.createElement("div");
           div.innerHTML = `
@@ -459,9 +643,24 @@
           docsList.appendChild(div);
         });
       } else {
-        docsList.innerHTML = `<p class="no-docs">No representative documents available for this topic.</p>`;
+        const docs = Array.isArray(topicData?.representative_docs) ? topicData.representative_docs : [];
+        if (docs && docs.length > 0) {
+          docs.forEach(doc => {
+            const div = document.createElement("div");
+            div.innerHTML = `
+              <p class="text-xs text-brand-gray-text">${doc.case_number}</p>
+              <a href="${doc.case_link}" target="_blank">${doc.case_title}</a>
+            `;
+            docsList.appendChild(div);
+          });
+        } else {
+          docsList.innerHTML = `<p class="no-docs">No representative documents available for this topic.</p>`;
+        }
       }
-  
+
+      const summaryValue = Number.isFinite(topicStats?.averagePercent) ? topicStats.averagePercent : undefined;
+      setProbabilitySummary(summaryValue);
+
       rightPanel.classList.add("active");
     }
   </script>  

@@ -1,6 +1,6 @@
 import datetime
 from fastapi import FastAPI, Request, Form, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import json
@@ -24,6 +24,14 @@ templates = Jinja2Templates(directory=".")
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     return templates.TemplateResponse("search.html", {"request": request})
+
+
+@app.get("/static/sc_cases_truncated_final_refit.csv")
+async def serve_cases_csv() -> FileResponse:
+    csv_path = os.path.join(os.path.dirname(__file__), "sc_cases_truncated_final_refit.csv")
+    if not os.path.exists(csv_path):
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    return FileResponse(csv_path, media_type="text/csv", filename="sc_cases_truncated_final_refit.csv")
 
 LOG_TIMEZONE = datetime.timezone(datetime.timedelta(hours=8))
 
