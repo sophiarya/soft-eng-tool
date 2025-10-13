@@ -1,275 +1,408 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <title>JurisTopic – Semantic Topic Hierarchy</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(180deg, #f5f3ff 0%, #f0f1ff 40%, #ffffff 100%);
-            color: #555;
-            margin: 0;
-            overflow: hidden;
-        }
+  <meta charset="UTF-8" />
+  <title>JurisTopic – Semantic Topic Hierarchy</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(180deg, #f5f3ff 0%, #f0f1ff 40%, #ffffff 100%);
+      color: #555;
+      margin: 0;
+      overflow: hidden;
+    }
 
-        svg {
+    #main-container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      display: block;
+    }
+
+    .link {
+      fill: none;
+      stroke-width: 2.8px;
+      stroke-opacity: 0.9;
+      filter: drop-shadow(0 0 3px rgba(138, 77, 255, 0.3));
+    }
+
+    .node circle {
+      fill: #8A94FF;
+      stroke: #4c0099;
+      stroke-width: 2px;
+      cursor: pointer;
+      transition: fill 0.25s;
+      filter: drop-shadow(0 1.5px 1px rgba(0, 0, 0, 0.08));
+    }
+
+    .node circle:hover {
+      fill: #4500e2;
+      filter: drop-shadow(0 1.5px 3px rgba(0, 0, 0, 0.2));
+    }
+
+    .tooltip {
+      position: absolute;
+      padding: 6px 10px;
+      background: #1E1B39;
+      color: #FFF;
+      border: 1px solid #C9CEFF;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      font-size: 12px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      max-width: 280px;
+      z-index: 10;
+    }
+
+    .zoom-controls {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      z-index: 12;
+    }
+
+    .zoom-controls button {
+      display: block;
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: white;
+      font-size: 18px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+    }
+
+    .zoom-controls button:hover {
+      background: #f5f5f5;
+    }
+
+    .label-bg {
+      fill: #FFF;
+      stroke: #C9CEFF;
+      stroke-width: 1px;
+      rx: 4;
+      ry: 4;
+      filter: drop-shadow(0 1.5px 1px rgba(0, 0, 0, 0.08));
+      transition: all 0.25s ease;
+    }
+
+    .label-text {
+      font-size: 13px;
+      fill: #333;
+    }
+
+    .label-group:hover .label-bg {
+      fill: #f0f1ff;
+    }
+
+    #right-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 400px; 
+    height: 100%;
+    background: #fff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    padding: 2rem;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.4s ease;
+    z-index: 15;
+    display: flex;
+    flex-direction: column;
+    }
+
+    #right-panel.active {
+    transform: translateX(0);
+    }
+
+    #close-panel {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    font-weight: bold;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.2s;
+    }
+
+    #close-panel:hover {
+    color: #333;
+    }
+
+    #right-panel h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+    }
+
+    .primary-color {
+    color: #4a3aff;
+    }
+
+    #relevant-docs-list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid #eee;
+    margin-top: 1rem;
+    }
+
+    #relevant-docs-list div {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #eee;
+    }
+
+    #relevant-docs-list a {
+    text-decoration: none;
+    color: #0055ff;
+    font-weight: 500;
+    font-size: 0.9rem;
+    }
+
+    #relevant-docs-list a:hover {
+    text-decoration: underline;
+    }
+
+    .no-docs {
+    color: #777;
+    font-size: 0.9rem;
+    padding-top: 1rem;
+    }
+
+    /* === Responsive Sizes === */
+    @media (max-width: 1440px) {
+        #right-panel {
+            width: 280px;
+            padding: 1.75rem;
+        }
+    }
+
+    @media (max-width: 1280px) {
+        #right-panel {
+            width: 260px;
+            padding: 1.5rem;
+        }
+        #right-panel h3 {
+            font-size: 0.95rem;
+        }
+    }
+
+    @media (max-width: 1024px) {
+        #right-panel {
+            width: 230px;
+            padding: 1.25rem;
+        }
+        #right-panel h3 {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        #right-panel {
+            width: 200px;
+            padding: 1rem;
+        }
+        #right-panel h3 {
+            font-size: 0.85rem;
+        }
+        #relevant-docs-list a {
+            font-size: 0.85rem;
+        }
+    }
+
+    @media (max-width: 500px) {
+        #right-panel {
             width: 100%;
-            height: 100vh;
-            cursor: grab;
+            height: 60%;
+            bottom: 0;
+            top: auto;
+            border-radius: 16px 16px 0 0;
+            transform: translateY(100%);
         }
-
-        .link {
-            fill: none;
-            stroke-width: 2.8px;
-            stroke-opacity: 0.9;
-            filter: drop-shadow(0 0 3px rgba(138, 77, 255, 0.3));
+        #right-panel.active {
+            transform: translateY(0);
         }
-
-        .node circle {
-            fill: #8A94FF;
-            stroke: #4c0099;
-            stroke-width: 2px;
-            cursor: pointer;
-            transition: fill 0.25s;
-            filter: drop-shadow(0 1.5px 1px rgba(0, 0, 0, 0.08));
+        #close-panel {
+            top: 8px;
+            right: 14px;
         }
-
-        .node circle:hover {
-            fill: #4500e2;
-            filter: drop-shadow(0 1.5px 3px rgba(0, 0, 0, 0.2));
-        }
-
-        .tooltip {
-            position: absolute;
-            padding: 6px 10px;
-            background: #1E1B39;
-            color: #FFF;
-            border: 1px solid #C9CEFF;
-            border-radius: 6px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            font-size: 12px;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s;
-            max-width: 280px;
-        }
-
-        .zoom-controls {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            z-index: 10;
-        }
-
-        .zoom-controls button {
-            display: block;
-            width: 40px;
-            height: 40px;
-            border: none;
-            background: white;
-            font-size: 18px;
-            cursor: pointer;
-            border-bottom: 1px solid #eee;
-        }
-
-        .zoom-controls button:hover {
-            background: #f5f5f5;
-        }
-
-        .zoom-controls button:last-child {
-            border-bottom: none;
-        }
-
-        .label-bg {
-            fill: #FFF;
-            stroke: #C9CEFF;
-            stroke-width: 1px;
-            rx: 4;
-            ry: 4;
-            filter: drop-shadow(0 1.5px 1px rgba(0, 0, 0, 0.08));
-            transition: all 0.25s ease;
-        }
-
-        .label-text {
-            font-size: 13px;
-            fill: #333;
-        }
-
-        .label-group:hover .label-bg {
-            fill: #f0f1ff;
-        }
-    </style>
+    }
+  </style>
 </head>
 
 <body>
+  <div id="main-container">
     <div class="zoom-controls">
-        <button id="zoom_in">+</button>
-        <button id="zoom_out">−</button>
+      <button id="zoom_in">+</button>
+      <button id="zoom_out">−</button>
     </div>
-
     <div id="tooltip" class="tooltip"></div>
     <svg id="dendrogram"></svg>
+    <aside id="right-panel">
+      <button id="close-panel">&times;</button>
+      <section id="relevant-docs" class="relevant-docs-card">
+        <h3>
+          Relevant Documents for
+          <span class="primary-color" id="selected-topic-label">—</span>
+        </h3>
+        <div id="relevant-docs-list">
+          <p class="no-docs">Select a topic to view related documents.</p>
+        </div>
+      </section>
+    </aside>
+  </div>
 
-    <script>
-        const tooltip = d3.select("#tooltip");
+  <script>
+    const tooltip = d3.select("#tooltip");
+    const rightPanel = document.getElementById("right-panel");
+    const closePanelBtn = document.getElementById("close-panel");
+    const topicLabel = document.getElementById("selected-topic-label");
+    const docsList = document.getElementById("relevant-docs-list");
 
-        d3.json("../static/topic_hierarchy.json").then(data => {
-            const width = 2200;
-            const height = 1600;
+    // --- Mock related docs 
+    const mockDocs = {
+      
+    };
 
-            const svg = d3.select("#dendrogram")
-                .attr("viewBox", [0, 0, width, height]);
+    closePanelBtn.addEventListener("click", () => {
+      rightPanel.classList.remove("active");
+    });
 
-            const g = svg.append("g");
+    d3.json("../static/topic_hierarchy.json").then(data => {
+      const width = 2200;
+      const height = 1600;
 
-            // --- Zoom setup ---
-            const zoom = d3.zoom()
-                .scaleExtent([0.4, 2.5])
-                .on("zoom", (event) => g.attr("transform", event.transform));
-            svg.call(zoom);
+      const svg = d3.select("#dendrogram").attr("viewBox", [0, 0, width, height]);
+      const g = svg.append("g");
 
-            d3.select("#zoom_in").on("click", () => svg.transition().call(zoom.scaleBy, 1.2));
-            d3.select("#zoom_out").on("click", () => svg.transition().call(zoom.scaleBy, 0.8));
+      const zoom = d3.zoom()
+        .scaleExtent([0.4, 2.5])
+        .on("zoom", (event) => g.attr("transform", event.transform));
+      svg.call(zoom);
 
-            // --- Tree layout ---
-            const root = d3.hierarchy(data);
-            const tree = d3.cluster()
-                .size([height - 200, width - 800])
-                .separation((a, b) => (a.parent === b.parent ? 6 : 8));
-            tree(root);
+      d3.select("#zoom_in").on("click", () => svg.transition().call(zoom.scaleBy, 1.2));
+      d3.select("#zoom_out").on("click", () => svg.transition().call(zoom.scaleBy, 0.8));
 
-            // Flip horizontally so it grows leftward
-            root.descendants().forEach(d => d.y = width - d.y - 600);
+      const root = d3.hierarchy(data);
+      const tree = d3.cluster().size([height - 200, width - 800]).separation((a, b) => (a.parent === b.parent ? 6 : 8));
+      tree(root);
 
-            const topAncestors = root.children ? root.children.map(d => d.data.name) : [root.data.name];
-            const colorScale = d3.scaleOrdinal()
-                .domain(topAncestors)
-                .range(d3.schemeTableau10);
+      root.descendants().forEach(d => d.y = width - d.y - 600);
 
-            function getTopAncestor(d) {
-                let n = d;
-                while (n.depth > 1) n = n.parent;
-                return n.data.name;
-            }
+      const topAncestors = root.children ? root.children.map(d => d.data.name) : [root.data.name];
+      const colorScale = d3.scaleOrdinal().domain(topAncestors).range(d3.schemeTableau10);
 
-            // --- Draw links ---
-            const elbow = d => `
-        M${d.source.y},${d.source.x}
-        V${d.target.x}
-        H${d.target.y}
-      `;
+      function getTopAncestor(d) {
+        let n = d;
+        while (n.depth > 1) n = n.parent;
+        return n.data.name;
+      }
 
-            g.selectAll(".link")
-                .data(root.links())
-                .join("path")
-                .attr("class", "link")
-                .attr("d", elbow)
-                .attr("stroke", d => colorScale(getTopAncestor(d.target)));
+      const elbow = d => `M${d.source.y},${d.source.x}V${d.target.x}H${d.target.y}`;
 
-            // --- Draw nodes ---
-            const node = g.selectAll(".node")
-                .data(root.descendants())
-                .join("g")
-                .attr("class", "node")
-                .attr("transform", d => `translate(${d.y},${d.x})`)
-                .on("mouseover", (event, d) => {
-                    tooltip.style("opacity", 1)
-                        .html(`<strong>${d.data.name}</strong>`)
-                        .style("left", (event.pageX + 10) + "px")
-                        .style("top", (event.pageY - 10) + "px");
-                })
-                .on("mousemove", (event) => {
-                    tooltip.style("left", (event.pageX + 10) + "px")
-                        .style("top", (event.pageY - 10) + "px");
-                })
-                .on("mouseout", () => tooltip.style("opacity", 0))
-                .on("click", (event, d) => {
-                    window.parent.postMessage({ type: 'topicClicked', topic: d.data.name }, '*');
-                    console.log("Clicked:", d.data.name);
-                });
+      g.selectAll(".link")
+        .data(root.links())
+        .join("path")
+        .attr("class", "link")
+        .attr("d", elbow)
+        .attr("stroke", d => colorScale(getTopAncestor(d.target)));
 
-            // --- Draw nodes with glow + hover effect ---
-            const nodeCircle = node.append("circle")
-                .attr("r", 6)
-                .attr("fill", d => colorScale(getTopAncestor(d)))
-                .style("filter", "drop-shadow(0 0 6px rgba(118, 93, 255, 0.45))")
-                .style("transition", "all 0.25s ease");
-
-            // --- Hover effect for glow and scale ---
-            nodeCircle
-                .on("mouseover", function () {
-                    d3.select(this)
-                        .transition()
-                        .duration(200)
-                        .attr("r", 8)
-                        .style("filter", "drop-shadow(0 0 10px rgba(118, 93, 255, 0.9))");
-                })
-                .on("mouseout", function () {
-                    d3.select(this)
-                        .transition()
-                        .duration(200)
-                        .attr("r", 6)
-                        .style("filter", "drop-shadow(0 0 6px rgba(118, 93, 255, 0.45))");
-                });
-
-            // --- Add labels for leaf nodes ---
-            const labels = node.filter(d => !d.children)
-                .append("g")
-                .attr("class", "label-group")
-                .attr("transform", "translate(-16,0)");
-
-            labels.append("rect").attr("class", "label-bg");
-
-            labels.append("text")
-                .attr("class", "label-text")
-                .attr("text-anchor", "end")
-                .attr("alignment-baseline", "middle")
-                .text(d => d.data.name);
-
-            // Resize label backgrounds
-            labels.each(function () {
-                const text = d3.select(this).select("text");
-                const rect = d3.select(this).select("rect");
-                const bbox = text.node().getBBox();
-                rect.attr("x", bbox.x - 6)
-                    .attr("y", bbox.y - 2)
-                    .attr("width", bbox.width + 12)
-                    .attr("height", bbox.height + 4)
-                    .attr("rx", 20)
-                    .attr("ry", 20);
-            });
-
-            // --- Center and scale the dendrogram ---
-            const bounds = g.node().getBBox();
-            const fullWidth = bounds.width;
-            const fullHeight = bounds.height;
-            const midX = bounds.x + fullWidth / 2;
-            const midY = bounds.y + fullHeight / 2;
-
-            const scale = Math.min(
-                1.2,
-                Math.max(0.6, 1 / Math.max(fullWidth / width, fullHeight / height))
-            );
-
-            const translateX = width / 2 - scale * midX;
-            const translateY = height / 2 - scale * midY;
-
-            svg.transition()
-                .duration(900)
-                .call(
-                    zoom.transform,
-                    d3.zoomIdentity
-                        .translate(translateX, translateY)
-                        .scale(scale)
-                );
+      const node = g.selectAll(".node")
+        .data(root.descendants())
+        .join("g")
+        .attr("class", "node")
+        .attr("transform", d => `translate(${d.y},${d.x})`)
+        .on("mouseover", (event, d) => {
+          tooltip.style("opacity", 1)
+            .html(`<strong>${d.data.name}</strong>`)
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 10) + "px");
+        })
+        .on("mousemove", (event) => {
+          tooltip.style("left", (event.pageX + 10) + "px").style("top", (event.pageY - 10) + "px");
+        })
+        .on("mouseout", () => tooltip.style("opacity", 0))
+        .on("click", (event, d) => {
+          showRelevantDocs(d.data.name);
         });
-    </script>
-</body>
 
+      node.append("circle")
+        .attr("r", 6)
+        .attr("fill", d => colorScale(getTopAncestor(d)))
+        .style("filter", "drop-shadow(0 0 6px rgba(118, 93, 255, 0.45))")
+        .style("transition", "all 0.25s ease");
+
+      const labels = node.filter(d => !d.children)
+        .append("g")
+        .attr("class", "label-group")
+        .attr("transform", "translate(-16,0)");
+
+      labels.append("rect").attr("class", "label-bg");
+      labels.append("text")
+        .attr("class", "label-text")
+        .attr("text-anchor", "end")
+        .attr("alignment-baseline", "middle")
+        .text(d => d.data.name);
+
+      labels.each(function () {
+        const text = d3.select(this).select("text");
+        const rect = d3.select(this).select("rect");
+        const bbox = text.node().getBBox();
+        rect.attr("x", bbox.x - 6)
+          .attr("y", bbox.y - 2)
+          .attr("width", bbox.width + 12)
+          .attr("height", bbox.height + 4)
+          .attr("rx", 20)
+          .attr("ry", 20);
+      });
+
+      // Center the dendrogram perfectly and keep it centered
+      const bounds = g.node().getBBox();
+      const scale = Math.min(1.2, Math.max(0.6, 1 / Math.max(bounds.width / width, bounds.height / height)));
+      const translateX = width / 2 - scale * (bounds.x + bounds.width / 2);
+      const translateY = height / 2 - scale * (bounds.y + bounds.height / 2);
+
+      svg.call(zoom.transform, d3.zoomIdentity.translate(translateX, translateY).scale(scale));
+    });
+
+    function showRelevantDocs(topicName) {
+      topicLabel.textContent = topicName;
+      docsList.innerHTML = "";
+
+      const docs = mockDocs[topicName];
+      if (docs && docs.length > 0) {
+        docs.forEach(doc => {
+          const div = document.createElement("div");
+          div.innerHTML = `
+            <p class="text-xs text-brand-gray-text">${doc.case_number}</p>
+            <a href="${doc.case_link}" target="_blank">${doc.case_title}</a>
+          `;
+          docsList.appendChild(div);
+        });
+      } else {
+        docsList.innerHTML = `<p class="no-docs">No representative documents available for this topic.</p>`;
+      }
+
+      rightPanel.classList.add("active");
+    }
+  </script>
+</body>
 </html>
