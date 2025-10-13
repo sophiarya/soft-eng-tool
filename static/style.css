@@ -1099,6 +1099,14 @@ details[open]>summary .chevron {
     border: 1px solid #A8F2C9;
     background: #FFF;
     overflow: visible;
+    cursor: pointer;
+    transition: background-color 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.topic-content-card.is-highlighted {
+    border-color: #37D089;
+    background-color: #f3fdf8;
+    box-shadow: 0 0 0 1px rgba(55, 208, 137, 0.15), 0 3px 9px rgba(55, 208, 137, 0.06);
 }
 
 .topic-content-card.expanded {
@@ -1125,6 +1133,9 @@ details[open]>summary .chevron {
 
 .topic-topwords {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
     gap: 10px;
 }
 
