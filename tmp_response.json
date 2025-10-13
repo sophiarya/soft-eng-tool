@@ -1,0 +1,52 @@
+{
+  "result": [
+    {
+      "score": 0.9,
+      "hierarchy": {
+        "root1": {
+          "Name": "RootOne",
+          "is_closest": false,
+          "Top_Words": [
+            "root"
+          ],
+          "children": [
+            {
+              "101": {
+                "Name": "ClosestOne",
+                "is_closest": true,
+                "Top_Words": [
+                  "closest1"
+                ],
+                "children": []
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "score": 0.8,
+      "hierarchy": {
+        "root2": {
+          "Name": "RootTwo",
+          "is_closest": false,
+          "Top_Words": [
+            "root"
+          ],
+          "children": [
+            {
+              "202": {
+                "Name": "ClosestTwo",
+                "is_closest": true,
+                "Top_Words": [
+                  "closest2"
+                ],
+                "children": []
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

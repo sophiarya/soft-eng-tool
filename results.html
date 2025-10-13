@@ -129,9 +129,9 @@
                     <div class="top-topics-container">
                         <div class="topic-grid flex flex-col gap-3">
                         {% for t in top_topics %}
-                        <div class="topic-content-card" data-topic-id="{{ t.id }}">
+                        <div class="topic-content-card" data-topic-id="{{ t.id }}" data-topic-name="{{ t.name }}" data-hierarchy-key="{{ t.hierarchy_key }}">
                             <div class="topic-content-wrapper">
-                                <div class="flex items-center justify-between w-full topic-card-header cursor-pointer" data-topic-id="{{ t.id }}">
+                                <div class="flex items-center justify-between w-full topic-card-header cursor-pointer" data-topic-id="{{ t.id }}" data-hierarchy-key="{{ t.hierarchy_key }}">
                                     <h2 class="topic-title mr-3 truncate">{{ t.name }}</h2>
                                     <div class="match-score ml-3 flex-shrink-0 text-right">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none">
@@ -149,20 +149,18 @@
                                         <span class="text-sm text-brand-gray-text">No keywords available.</span>
                                     {% endif %}
                                 </div>
-                                <div class="card-actions hidden mt-4 flex w-full justify-center" data-topic-id="{{ t.id }}">
-                                    <div class="closest-match-buttons">
-                                        <button class="btn-view-hierarchy" data-topic-id="{{ t.id }}">View Full Hierarchy</button>
-                                        <button class="btn-view-cases" data-topic-id="{{ t.id }}">View Related Cases</button>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         {% endfor %}
                         </div>
+                        <div class="closest-match-buttons mt-4" id="closest-match-actions">
+                            <button class="btn-view-hierarchy">View Full Hierarchy</button>
+                            <button class="btn-view-cases">View Related Cases</button>
+                        </div>
                     </div>
-                    <!-- Removed global buttons; per-card buttons appear when selected -->
+                    <!-- Global action buttons for closest match -->
                 </section>
-                <section class="topic-hierarchy-card">
+                <section class="topic-hierarchy-card" data-active-hierarchy-key="{{ initial_hierarchy_key }}">
                     <div class="dendogram-header-text">
                         <h2 class="secondary-color text-lg sm:text-xl md:text-2xl font-semibold">
                             Topic Hierarchy
@@ -346,6 +344,7 @@
         </footer>
     </body>
     <script id="hierarchy-data" type="application/json">{{ hierarchy_json | safe }}</script>
+    <script id="all-hierarchies-data" type="application/json">{{ all_hierarchies_json | safe }}</script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const hierarchySection = document.querySelector('.topic-hierarchy-card');
@@ -443,25 +442,26 @@
                 newSearchLink.addEventListener('click', () => warmSearchApi('start-new-search'));
             }
 
-            let hierarchyData = [];
-            try {
-                hierarchyData = JSON.parse(dataElement.textContent || '[]');
-            } catch (error) {
-                console.error('Failed to parse hierarchy JSON', error);
-                return;
-            }
-
-            const topicIndex = new Map();
-            const indexNodes = (nodes) => {
-                nodes.forEach((node) => {
-                    topicIndex.set(node.id, node);
-                    if (Array.isArray(node.children) && node.children.length) {
-                        indexNodes(node.children);
+            const parseJsonContent = (element, fallback) => {
+                if (!element) {
+                    return fallback;
+                }
+                try {
+                    const raw = element.textContent || element.innerText || '';
+                    if (!raw) {
+                        return fallback;
                     }
-                });
+                    return JSON.parse(raw);
+                } catch (error) {
+                    console.error('Failed to parse hierarchy JSON', error);
+                    return fallback;
+                }
             };
-            indexNodes(hierarchyData);
 
+            let hierarchyData = parseJsonContent(dataElement, []);
+            const hierarchiesMap = parseJsonContent(document.getElementById('all-hierarchies-data'), {});
+            const hierarchySection = document.querySelector('.topic-hierarchy-card');
+            const hierarchyContainer = document.querySelector('.topic-hierarchy-container');
             const docsSection = document.getElementById('relevant-docs');
             const docsContainer = document.getElementById('relevant-docs-list');
             const topicLabel = document.getElementById('selected-topic-label');
@@ -469,11 +469,10 @@
             const paginationInfo = document.getElementById('docs-pagination-info');
             const prevButton = document.getElementById('docs-prev-btn');
             const nextButton = document.getElementById('docs-next-btn');
-            const summaries = Array.from(document.querySelectorAll('.topic-summary'));
-            const cardHeaders = Array.from(document.querySelectorAll('.topic-card-header'));
             const topicCards = Array.from(document.querySelectorAll('.topic-content-card'));
+            const cardHeaders = Array.from(document.querySelectorAll('.topic-card-header'));
 
-            if (!docsSection || !docsContainer || !topicLabel) {
+            if (!hierarchyContainer || !docsSection || !docsContainer || !topicLabel) {
                 return;
             }
 
@@ -483,9 +482,33 @@
                 closest: ['bg-emerald-50', 'ring', 'ring-emerald-200', 'rounded-xl'],
             };
             const SELECTED_CARD_CLASSES = ['ring', 'ring-blue-200', 'bg-white'];
+
+            const toIdString = (value) => (value == null ? '' : String(value));
+
+            let currentHierarchyKey = hierarchySection ? hierarchySection.dataset.activeHierarchyKey || null : null;
+            let topicIndex = new Map();
+            let summaries = Array.from(document.querySelectorAll('.topic-summary'));
             let activeSummary = null;
             let currentDocs = [];
             let currentPage = 0;
+
+            const buildTopicIndex = (nodes) => {
+                const index = new Map();
+                const visit = (node) => {
+                    if (!node || typeof node !== 'object') {
+                        return;
+                    }
+                    const nodeId = toIdString(node.id);
+                    if (nodeId) {
+                        index.set(nodeId, node);
+                    }
+                    if (Array.isArray(node.children)) {
+                        node.children.forEach(visit);
+                    }
+                };
+                nodes.forEach(visit);
+                return index;
+            };
 
             const clearActiveSummary = () => {
                 if (!activeSummary) {
@@ -495,9 +518,9 @@
                 activeSummary = null;
             };
 
-            const hideAllCardActions = () => {
-                document.querySelectorAll('.card-actions').forEach((el) => el.classList.add('hidden'));
+            const resetCardHighlights = () => {
                 topicCards.forEach((card) => {
+                    card.classList.remove('expanded');
                     SELECTED_CARD_CLASSES.forEach((cls) => card.classList.remove(cls));
                 });
             };
@@ -534,6 +557,7 @@
                 paginationContainer.classList.remove('hidden');
                 const start = currentPage * DOCS_PER_PAGE + 1;
                 const end = Math.min((currentPage + 1) * DOCS_PER_PAGE, currentDocs.length);
+
                 if (paginationInfo) {
                     paginationInfo.textContent = `Showing ${start}-${end} of ${currentDocs.length}`;
                 }
@@ -586,46 +610,221 @@
                 updatePagination(totalPages);
             };
 
-            const selectTopic = (topicId, options = { scroll: true }) => {
-                const node = topicIndex.get(topicId);
-                const summaryEl = document.querySelector(`.topic-summary[data-topic-id="${topicId}"]`);
+            const createHierarchyNode = (node, openSet) => {
+                const nodeId = toIdString(node.id);
+                const wrapper = document.createElement('div');
+                wrapper.className = 'topic-details-wrapper';
+                wrapper.dataset.topicId = nodeId;
 
-                if (!node || !summaryEl) {
+                const details = document.createElement('details');
+                details.className = 'group';
+                details.dataset.topicId = nodeId;
+                if (nodeId && openSet.has(nodeId)) {
+                    details.open = true;
+                }
+
+                const summary = document.createElement('summary');
+                summary.className = 'topic-summary';
+                summary.dataset.topicId = nodeId;
+
+                const header = document.createElement('div');
+                header.className = 'flex items-center gap-3';
+
+                const chevron = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                chevron.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                chevron.setAttribute('class', 'chevron h-5 w-5 text-brand-gray-text transition-transform duration-200');
+                chevron.setAttribute('viewBox', '0 0 20 20');
+                chevron.setAttribute('fill', 'currentColor');
+
+                const chevronPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                chevronPath.setAttribute('fill-rule', 'evenodd');
+                chevronPath.setAttribute('clip-rule', 'evenodd');
+                chevronPath.setAttribute('d', 'M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z');
+                chevron.appendChild(chevronPath);
+                header.appendChild(chevron);
+
+                const title = document.createElement('span');
+                title.className = 'topic-title text-lg font-semibold text-brand-gray';
+                title.dataset.topicId = nodeId;
+                title.dataset.topicName = node.name || '';
+                title.textContent = node.name || '';
+                header.appendChild(title);
+
+                if (node.is_closest) {
+                    const badge = document.createElement('span');
+                    badge.className = 'ml-2 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold uppercase tracking-wide';
+                    badge.textContent = 'Closest Match';
+                    header.appendChild(badge);
+                }
+
+                summary.appendChild(header);
+                details.appendChild(summary);
+
+                const topwordsContainer = document.createElement('div');
+                topwordsContainer.className = 'topwords-container';
+
+                if (Array.isArray(node.top_words) && node.top_words.length) {
+                    node.top_words.slice(0, 6).forEach((word) => {
+                        const span = document.createElement('span');
+                        span.className = 'topwords';
+                        span.textContent = word;
+                        topwordsContainer.appendChild(span);
+                    });
+                } else {
+                    const empty = document.createElement('span');
+                    empty.className = 'text-sm text-brand-gray-text';
+                    empty.textContent = 'No keywords available.';
+                    topwordsContainer.appendChild(empty);
+                }
+
+                details.appendChild(topwordsContainer);
+
+                if (Array.isArray(node.children) && node.children.length) {
+                    const childrenContainer = document.createElement('div');
+                    childrenContainer.className = 'topic-children mt-3 border-l border-brand-gray-border pl-4 sm:pl-6';
+                    node.children.forEach((child) => {
+                        childrenContainer.appendChild(createHierarchyNode(child, openSet));
+                    });
+                    details.appendChild(childrenContainer);
+                }
+
+                wrapper.appendChild(details);
+                return wrapper;
+            };
+
+            const rebuildHierarchyContainer = (nodes, openIds = []) => {
+                if (!hierarchyContainer) {
+                    return;
+                }
+                clearActiveSummary();
+                const openSet = new Set(Array.isArray(openIds) ? openIds.map(toIdString) : []);
+                const fragment = document.createDocumentFragment();
+                nodes.forEach((node) => {
+                    fragment.appendChild(createHierarchyNode(node, openSet));
+                });
+                hierarchyContainer.replaceChildren(fragment);
+                summaries = Array.from(hierarchyContainer.querySelectorAll('.topic-summary'));
+            };
+
+            const selectTopic = (topicId, options = { scroll: true }) => {
+                const normalizedId = toIdString(topicId);
+                if (!normalizedId) {
                     return;
                 }
 
-                const detailsEl = summaryEl.closest('details');
-                if (detailsEl && !detailsEl.open) {
-                    detailsEl.open = true;
+                resetCardHighlights();
+                let card = null;
+                if (currentHierarchyKey) {
+                    card = document.querySelector(`.topic-content-card[data-hierarchy-key="${currentHierarchyKey}"]`);
                 }
+                if (!card) {
+                    card = document.querySelector(`.topic-content-card[data-topic-id="${normalizedId}"]`);
+                }
+                const cardName = card ? (card.dataset.topicName || 'Selected Topic') : 'Selected Topic';
 
-                highlightSummary(summaryEl, node);
-                docsSection.dataset.selectedTopic = topicId;
-                topicLabel.textContent = node.name || 'Selected Topic';
-                currentDocs = Array.isArray(node.representative_docs) ? node.representative_docs : [];
-                renderDocsPage(0);
-
-                // Show actions for matching top topic card, if present, and expand card height
-                hideAllCardActions();
-                const cardActions = document.querySelector(`.card-actions[data-topic-id="${topicId}"]`);
-                const card = document.querySelector(`.topic-content-card[data-topic-id="${topicId}"]`);
-                if (cardActions && card) {
-                    cardActions.classList.remove('hidden');
+                if (card) {
                     card.classList.add('expanded');
                     SELECTED_CARD_CLASSES.forEach((cls) => card.classList.add(cls));
                 }
+
+                const node = topicIndex.get(normalizedId);
+                const summaryEl = document.querySelector(`.topic-summary[data-topic-id="${normalizedId}"]`);
+                if (node && summaryEl) {
+                    const detailsEl = summaryEl.closest('details');
+                    if (detailsEl && !detailsEl.open) {
+                        detailsEl.open = true;
+                    }
+
+                    highlightSummary(summaryEl, node);
+                    docsSection.dataset.selectedTopic = normalizedId;
+                    topicLabel.textContent = node.name || cardName;
+                    currentDocs = Array.isArray(node.representative_docs) ? node.representative_docs : [];
+                } else {
+                    clearActiveSummary();
+                    docsSection.dataset.selectedTopic = normalizedId;
+                    topicLabel.textContent = cardName;
+                    currentDocs = [];
+                }
+
+                renderDocsPage(0);
 
                 if (options.scroll) {
                     docsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             };
-            // Clicking top topic cards selects that topic
+
+            const bindSummaryHandlers = () => {
+                summaries.forEach((summary) => {
+                    summary.addEventListener('click', (event) => {
+                        const isChevron = event.target.closest('.chevron');
+                        if (!isChevron) {
+                            event.preventDefault();
+                            const topicId = summary.dataset.topicId;
+                            if (topicId) {
+                                selectTopic(topicId);
+                            }
+                        }
+                    });
+                });
+            };
+
+            const setActiveHierarchy = (key, options = {}) => {
+                if (!key) {
+                    return false;
+                }
+                const data = hierarchiesMap && hierarchiesMap[key];
+                if (!data || !Array.isArray(data.hierarchy)) {
+                    return false;
+                }
+
+                currentHierarchyKey = key;
+                if (hierarchySection) {
+                    hierarchySection.dataset.activeHierarchyKey = key;
+                }
+                docsSection.dataset.activeHierarchyKey = key;
+
+                hierarchyData = data.hierarchy;
+                topicIndex = buildTopicIndex(hierarchyData);
+                rebuildHierarchyContainer(hierarchyData, data.open_topic_ids || []);
+                bindSummaryHandlers();
+
+                const fallbackId = hierarchyData.length ? hierarchyData[0].id : null;
+                const targetTopicId = options.preferredTopicId || data.selected_topic_id || fallbackId;
+                if (targetTopicId) {
+                    selectTopic(targetTopicId, { scroll: options.scroll ?? false });
+                } else {
+                    currentDocs = [];
+                    renderDocsPage(0);
+                }
+                return true;
+            };
+
+            const handleTopTopicSelect = (card) => {
+                if (!card) {
+                    return;
+                }
+                const hierarchyKey = card.dataset.hierarchyKey || null;
+                const topicId = card.dataset.topicId || null;
+                if (hierarchyKey && setActiveHierarchy(hierarchyKey, { preferredTopicId: topicId, scroll: false })) {
+                    return;
+                }
+                if (topicId) {
+                    selectTopic(topicId, { scroll: false });
+                }
+            };
+
+            topicCards.forEach((card) => {
+                card.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    handleTopTopicSelect(card);
+                });
+            });
+
             cardHeaders.forEach((header) => {
-                header.addEventListener('click', () => {
-                    const topicId = header.dataset.topicId;
-                    if (topicId) {
-                        selectTopic(topicId, { scroll: false });
-                    }
+                header.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    const card = header.closest('.topic-content-card');
+                    handleTopTopicSelect(card);
                 });
             });
 
@@ -650,18 +849,15 @@
                 nextButton.disabled = true;
             }
 
-            summaries.forEach((summary) => {
-                summary.addEventListener('click', (event) => {
-                    const isChevron = event.target.closest('.chevron');
-                    if (!isChevron) {
-                        event.preventDefault();
-                        const topicId = summary.dataset.topicId;
-                        selectTopic(topicId);
-                    }
-                });
-            });
-
             const initialTopicId = docsSection.dataset.selectedTopic;
+            if (currentHierarchyKey && setActiveHierarchy(currentHierarchyKey, { preferredTopicId: initialTopicId, scroll: false })) {
+                return;
+            }
+
+            topicIndex = buildTopicIndex(hierarchyData);
+            summaries = Array.from(document.querySelectorAll('.topic-summary'));
+            bindSummaryHandlers();
+
             if (initialTopicId && topicIndex.has(initialTopicId)) {
                 selectTopic(initialTopicId, { scroll: false });
             } else {
@@ -669,6 +865,8 @@
                 const fallbackId = iterator.next().value;
                 if (fallbackId) {
                     selectTopic(fallbackId, { scroll: false });
+                } else {
+                    renderDocsPage(0);
                 }
             }
         })();

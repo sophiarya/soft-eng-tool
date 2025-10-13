@@ -120,6 +120,30 @@ def _index_nodes(nodes: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
         traverse(node)
     return index
 
+def _find_closest_node(root_tree: Dict[str, Any]) -> tuple[str, Dict[str, Any]] | None:
+    """Return (id, data) for the first node flagged as closest within the hierarchy."""
+
+    def traverse(node_id: str, node_data: Dict[str, Any]) -> tuple[str, Dict[str, Any]] | None:
+        if bool(node_data.get("is_closest")):
+            return str(node_id), node_data
+
+        for child in node_data.get("children", []) or []:
+            for child_id, child_data in child.items():
+                if not isinstance(child_data, dict):
+                    continue
+                found = traverse(str(child_id), child_data)
+                if found:
+                    return found
+        return None
+
+    for root_id, root_data in root_tree.items():
+        if not isinstance(root_data, dict):
+            continue
+        found = traverse(str(root_id), root_data)
+        if found:
+            return found
+    return None
+
 @app.post("/search", response_class=HTMLResponse)
 async def search_topics(request: Request, search_term: str = Form(...)):
     print(f"[LOG] Received search_term: {search_term}")
@@ -129,7 +153,7 @@ async def search_topics(request: Request, search_term: str = Form(...)):
     payload = {
         "query": search_term,
         "levels_up": 2,
-        "top_n": 1,
+        "top_n": 3,
 
     }
 
@@ -151,15 +175,89 @@ async def search_topics(request: Request, search_term: str = Form(...)):
         print("[ERROR] Invalid JSON from topic service:", exc)
         raise HTTPException(status_code=502, detail="Invalid response from upstream service") from exc
 
-    result_tree = response_data.get("result")
-    if result_tree is None:
+    raw_results = response_data.get("result")
+    if raw_results is None:
         print("[ERROR] Missing 'result' field in response:")
         pprint.pprint(response_data, indent=2, width=100)
         raise HTTPException(status_code=502, detail="Unexpected response format from topic service")
 
-    hierarchy, open_topic_ids, selected_topic_id = _build_hierarchy(result_tree)
-    node_index = _index_nodes(hierarchy)
+    if isinstance(raw_results, dict):
+        result_items: List[Dict[str, Any]] = [raw_results]
+    elif isinstance(raw_results, list):
+        result_items = [item for item in raw_results if isinstance(item, dict)]
+    else:
+        print("[ERROR] Unexpected 'result' type:", type(raw_results))
+        raise HTTPException(status_code=502, detail="Unexpected response format from topic service")
 
+    primary_entry = next(
+        (item for item in result_items if isinstance(item.get("hierarchy"), dict)),
+        None,
+    )
+    if primary_entry is None:
+        print("[ERROR] No hierarchy-containing entries found in response:")
+        pprint.pprint(raw_results, indent=2, width=100)
+        raise HTTPException(status_code=502, detail="No hierarchy data returned by topic service")
+
+    primary_hierarchy = primary_entry.get("hierarchy", {})
+    primary_index = result_items.index(primary_entry)
+
+    hierarchy: List[Dict[str, Any]] = []
+    open_topic_ids: List[str] = []
+    selected_topic_id: str = ""
+
+    hierarchies_payload: Dict[str, Dict[str, Any]] = {}
+    top_topics: List[Dict[str, Any]] = []
+
+    for idx, item in enumerate(result_items):
+        hierarchy_tree = item.get("hierarchy")
+        if not isinstance(hierarchy_tree, dict) or not hierarchy_tree:
+            continue
+
+        hierarchy_key = f"hierarchy_{idx}"
+        processed_hierarchy, open_ids, default_topic_id = _build_hierarchy(hierarchy_tree)
+        hierarchies_payload[hierarchy_key] = {
+            "hierarchy": processed_hierarchy,
+            "open_topic_ids": open_ids,
+            "selected_topic_id": default_topic_id,
+        }
+
+        if idx == primary_index:
+            hierarchy = processed_hierarchy
+            open_topic_ids = open_ids
+            selected_topic_id = default_topic_id
+
+        score = item.get("score")
+        try:
+            score_value = float(score) if score is not None else 0.0
+        except (TypeError, ValueError):
+            score_value = 0.0
+
+        closest = _find_closest_node(hierarchy_tree)
+        if closest is None:
+            closest = next(
+                (
+                    (str(root_id), root_data)
+                    for root_id, root_data in hierarchy_tree.items()
+                    if isinstance(root_data, dict)
+                ),
+                None,
+            )
+        if closest is None:
+            continue
+
+        topic_id, topic_data = closest
+        top_topics.append({
+            "id": str(topic_id),
+            "name": topic_data.get("Name", ""),
+            "top_words": topic_data.get("Top_Words") or [],
+            "score": score_value,
+            "hierarchy_key": hierarchy_key,
+        })
+
+    if not hierarchy:
+        raise HTTPException(status_code=502, detail="Empty result returned by topic service")
+
+    node_index = _index_nodes(hierarchy)
     selected_topic = node_index.get(selected_topic_id, {})
     context = {
         "request": request,
@@ -169,8 +267,10 @@ async def search_topics(request: Request, search_term: str = Form(...)):
         "selected_topic_id": selected_topic_id,
         "selected_topic_name": selected_topic.get("name", ""),
         "selected_docs": selected_topic.get("representative_docs", []),
-        # "top_topics": top_topics,
+        "top_topics": top_topics,
         "hierarchy_json": json.dumps(hierarchy),
+        "all_hierarchies_json": json.dumps(hierarchies_payload),
+        "initial_hierarchy_key": f"hierarchy_{primary_index}",
     }
 
     print("[LOG] Parsed hierarchy:")
