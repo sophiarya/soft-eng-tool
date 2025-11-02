@@ -204,11 +204,11 @@
                             <span>Full Screen</span>
                         </button>
                     </div>
-                    <div class="dendogram-container">
-                        <iframe 
+                    <div class="dendogram-container" tabindex="0">
+                        <iframe
                             id="topic-hierarchy-iframe"
-                            src="src/dendogram.html" 
-                            class="w-full h-[600px] border-0 custom-scroll" 
+                            src="src/dendogram.html"
+                            class="w-full h-[600px] border-0 custom-scroll"
                             scrolling="yes"
                             allow="fullscreen"
                             allowfullscreen
@@ -850,5 +850,55 @@
                     });
                 }
             });
+
+        // Handle Ctrl/Cmd+F for dendrogram search when container or iframe is focused
+        const dendogramContainer = document.querySelector('.dendogram-container');
+        const dendogramIframe = document.getElementById('topic-hierarchy-iframe');
+        let isDendogramFocused = false;
+
+        if (dendogramContainer && dendogramIframe) {
+            // Track when dendrogram container or its children receive focus
+            dendogramContainer.addEventListener('focusin', () => {
+                isDendogramFocused = true;
+            });
+
+            dendogramContainer.addEventListener('focusout', (e) => {
+                // Only set to false if focus is leaving the container entirely
+                if (!dendogramContainer.contains(e.relatedTarget)) {
+                    isDendogramFocused = false;
+                }
+            });
+
+            // Handle clicks on the container to set focus state
+            dendogramContainer.addEventListener('click', () => {
+                isDendogramFocused = true;
+            });
+
+            // Intercept Ctrl/Cmd+F when dendrogram is focused
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'f' && isDendogramFocused) {
+                    e.preventDefault();
+
+                    // Send the search trigger to the iframe
+                    try {
+                        const iframeWindow = dendogramIframe.contentWindow;
+                        if (iframeWindow) {
+                            // Trigger the search in the iframe by simulating Ctrl/Cmd+F
+                            const event = new KeyboardEvent('keydown', {
+                                key: 'f',
+                                code: 'KeyF',
+                                ctrlKey: e.ctrlKey,
+                                metaKey: e.metaKey,
+                                bubbles: true,
+                                cancelable: true
+                            });
+                            iframeWindow.document.dispatchEvent(event);
+                        }
+                    } catch (error) {
+                        console.error('Error triggering iframe search:', error);
+                    }
+                }
+            });
+        }
     </script>
 </html>

@@ -64,6 +64,59 @@
       z-index: 10;
     }
 
+    .search-bar {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+      padding: 8px 12px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      z-index: 13;
+      min-width: 250px;
+    }
+
+    .search-bar.active {
+      display: flex;
+    }
+
+    .search-bar input {
+      flex: 1;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-size: 13px;
+      outline: none;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .search-bar input:focus {
+      border-color: #4a3aff;
+    }
+
+    .search-bar button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      color: #666;
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .search-bar button:hover {
+      color: #333;
+    }
+
+    .search-results-info {
+      font-size: 11px;
+      color: #666;
+      white-space: nowrap;
+    }
+
     .zoom-controls {
       position: absolute;
       top: 10px;
@@ -73,6 +126,11 @@
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
       overflow: hidden;
       z-index: 12;
+      transition: top 0.3s ease;
+    }
+
+    .search-bar.active ~ .zoom-controls {
+      top: 60px;
     }
 
     .zoom-controls button {
@@ -88,6 +146,18 @@
 
     .zoom-controls button:hover {
       background: #f5f5f5;
+    }
+
+    .highlight-match circle {
+      fill: #FFD700 !important;
+      stroke: #FFA500 !important;
+      stroke-width: 3px !important;
+      filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8)) !important;
+    }
+
+    .keyword-highlight {
+      fill: #FFD700;
+      opacity: 0.8;
     }
 
     .label-bg {
@@ -347,6 +417,11 @@
 
 <body>
   <div id="main-container">
+    <div class="search-bar" id="search-bar">
+      <input type="text" id="search-input" placeholder="Search topics..." />
+      <span class="search-results-info" id="search-results-info"></span>
+      <button id="search-close" title="Close search (Esc)">&times;</button>
+    </div>
     <div class="zoom-controls">
       <button id="zoom_in">+</button>
       <button id="zoom_out">−</button>
@@ -389,10 +464,243 @@
 
     const topicCasesById = new Map();
     const normalizeText = (value) => (typeof value === "string" ? value.trim() : "");
-  
+
     closePanelBtn.addEventListener("click", () => {
       rightPanel.classList.remove("active");
     });
+
+    // === Custom Search Functionality ===
+    const searchBar = document.getElementById("search-bar");
+    const searchInput = document.getElementById("search-input");
+    const searchClose = document.getElementById("search-close");
+    const searchResultsInfo = document.getElementById("search-results-info");
+
+    let allNodes = [];
+    let matchingNodes = [];
+    let currentMatchIndex = -1;
+
+    // Handle Ctrl/Cmd+F to show custom search
+    document.addEventListener("keydown", (e) => {
+      // Check for Ctrl+F (Windows/Linux) or Cmd+F (Mac)
+      if ((e.ctrlKey || e.metaKey) && e.key === "f") {
+        e.preventDefault();
+        searchBar.classList.add("active");
+        searchInput.focus();
+        searchInput.select();
+      }
+
+      // Handle Escape to close search
+      if (e.key === "Escape" && searchBar.classList.contains("active")) {
+        closeSearch();
+      }
+
+      // Handle Enter to navigate to next result
+      if (e.key === "Enter" && searchBar.classList.contains("active") && matchingNodes.length > 0) {
+        e.preventDefault();
+        if (e.shiftKey) {
+          navigateToPreviousMatch();
+        } else {
+          navigateToNextMatch();
+        }
+      }
+    });
+
+    // Close search bar
+    searchClose.addEventListener("click", closeSearch);
+
+    function closeSearch() {
+      searchBar.classList.remove("active");
+      searchInput.value = "";
+      clearHighlights();
+      searchResultsInfo.textContent = "";
+      matchingNodes = [];
+      currentMatchIndex = -1;
+    }
+
+    // Search input handler
+    searchInput.addEventListener("input", (e) => {
+      const query = e.target.value.trim().toLowerCase();
+
+      if (!query) {
+        clearHighlights();
+        searchResultsInfo.textContent = "";
+        matchingNodes = [];
+        currentMatchIndex = -1;
+        return;
+      }
+
+      performSearch(query);
+    });
+
+    function performSearch(query) {
+      clearHighlights();
+      matchingNodes = [];
+
+      // Search through all nodes
+      allNodes.forEach(nodeData => {
+        const topicName = nodeData.data.name || "";
+        const topWords = Array.isArray(nodeData.data.top_words) ? nodeData.data.top_words : [];
+
+        // Check if topic name matches
+        const nameMatches = topicName.toLowerCase().includes(query);
+
+        // Check if any top word matches
+        const wordMatches = topWords.some(word =>
+          word.toLowerCase().includes(query)
+        );
+
+        if (nameMatches || wordMatches) {
+          matchingNodes.push({
+            node: nodeData,
+            matchesName: nameMatches,
+            matchesWords: wordMatches
+          });
+        }
+      });
+
+      // Update UI with results
+      if (matchingNodes.length > 0) {
+        currentMatchIndex = 0;
+        highlightMatches();
+        updateSearchInfo();
+        focusOnMatch(0);
+      } else {
+        searchResultsInfo.textContent = "No matches";
+        currentMatchIndex = -1;
+      }
+    }
+
+    function highlightMatches() {
+      const query = searchInput.value.trim().toLowerCase();
+
+      matchingNodes.forEach(matchData => {
+        const nodeData = matchData.node;
+        const nodeElement = d3.select(`#node-${nodeData.data.id}`);
+        if (!nodeElement.empty()) {
+          // Add yellow ring to circle
+          nodeElement.classed("highlight-match", true);
+
+          // Highlight matching text in label only if the name matches
+          if (matchData.matchesName) {
+            const labelGroup = nodeElement.select(".label-group");
+            if (!labelGroup.empty()) {
+              highlightTextInLabel(labelGroup, nodeData.data.name, query);
+            }
+          }
+        }
+      });
+    }
+
+    function highlightTextInLabel(labelGroup, text, query) {
+      const textElement = labelGroup.select(".label-text");
+      if (textElement.empty() || !text || !query) return;
+
+      const lowerText = text.toLowerCase();
+      const matchIndex = lowerText.indexOf(query);
+
+      if (matchIndex === -1) return;
+
+      // Get the bounding box of the text element
+      const textNode = textElement.node();
+      const textBBox = textNode.getBBox();
+
+      // Calculate the position and width of the matching substring
+      const beforeText = text.substring(0, matchIndex);
+      const matchText = text.substring(matchIndex, matchIndex + query.length);
+
+      // Create temporary text elements to measure widths with start anchor for accurate measurement
+      const tempBefore = labelGroup.append("text")
+        .attr("class", "label-text")
+        .attr("text-anchor", "start")
+        .attr("alignment-baseline", "middle")
+        .text(beforeText);
+
+      const tempMatch = labelGroup.append("text")
+        .attr("class", "label-text")
+        .attr("text-anchor", "start")
+        .attr("alignment-baseline", "middle")
+        .text(matchText);
+
+      const beforeWidth = beforeText ? tempBefore.node().getBBox().width : 0;
+      const matchWidth = tempMatch.node().getBBox().width;
+
+      // Remove temporary elements
+      tempBefore.remove();
+      tempMatch.remove();
+
+      // Create highlight rectangle
+      // Since text-anchor is "end", text flows left-to-right starting from textBBox.x
+      const highlightX = textBBox.x + beforeWidth - 3;
+      const highlightY = textBBox.y - 1;
+      const highlightWidth = matchWidth + 6;
+      const highlightHeight = textBBox.height + 2;
+
+      // Insert highlight rect before the text
+      labelGroup.insert("rect", ".label-text")
+        .attr("class", "keyword-highlight")
+        .attr("x", highlightX)
+        .attr("y", highlightY)
+        .attr("width", highlightWidth)
+        .attr("height", highlightHeight)
+        .attr("rx", 3)
+        .attr("ry", 3);
+    }
+
+    function clearHighlights() {
+      d3.selectAll(".node").classed("highlight-match", false);
+      d3.selectAll(".keyword-highlight").remove();
+    }
+
+    function updateSearchInfo() {
+      if (matchingNodes.length > 0) {
+        searchResultsInfo.textContent = `${currentMatchIndex + 1} / ${matchingNodes.length}`;
+      } else {
+        searchResultsInfo.textContent = "";
+      }
+    }
+
+    function navigateToNextMatch() {
+      if (matchingNodes.length === 0) return;
+      currentMatchIndex = (currentMatchIndex + 1) % matchingNodes.length;
+      updateSearchInfo();
+      focusOnMatch(currentMatchIndex);
+    }
+
+    function navigateToPreviousMatch() {
+      if (matchingNodes.length === 0) return;
+      currentMatchIndex = (currentMatchIndex - 1 + matchingNodes.length) % matchingNodes.length;
+      updateSearchInfo();
+      focusOnMatch(currentMatchIndex);
+    }
+
+    function focusOnMatch(index) {
+      if (index < 0 || index >= matchingNodes.length) return;
+
+      const matchData = matchingNodes[index];
+      const nodeData = matchData.node;
+      const svg = d3.select("#dendrogram");
+      const g = svg.select("g");
+
+      // Get the current transform
+      const currentTransform = d3.zoomTransform(svg.node());
+
+      // Calculate new position to center the node
+      const width = 2200;
+      const height = 1600;
+      const scale = currentTransform.k;
+
+      const x = nodeData.y;
+      const y = nodeData.x;
+
+      const newX = width / 2 - x * scale;
+      const newY = height / 2 - y * scale;
+
+      // Animate to the new position
+      const zoom = d3.zoom();
+      svg.transition()
+        .duration(500)
+        .call(zoom.transform, d3.zoomIdentity.translate(newX, newY).scale(scale));
+    }
   
     Promise.all([
       d3.json("../static/topic_hierarchy_v2.json"),
@@ -479,10 +787,14 @@
         .attr("d", elbow)
         .attr("stroke", d => colorScale(getTopAncestor(d.target)));
   
+      // Store all nodes for search functionality
+      allNodes = root.descendants();
+
       const node = g.selectAll(".node")
-        .data(root.descendants())
+        .data(allNodes)
         .join("g")
         .attr("class", "node")
+        .attr("id", d => `node-${d.data.id}`)
         .attr("transform", d => `translate(${d.y},${d.x})`)
         .on("mouseover", (event, d) => {
           if (d.depth === 0) return;
@@ -536,10 +848,17 @@
       });
   
       const bounds = g.node().getBBox();
-      const scale = Math.min(1.2, Math.max(0.6, 1 / Math.max(bounds.width / width, bounds.height / height)));
+
+      // Calculate minimum zoom to fit the full height of the dendrogram
+      const minZoomScale = height / bounds.height;
+
+      // Update zoom scale extent with the calculated minimum
+      zoom.scaleExtent([minZoomScale * 0.95, 2.5]);
+
+      const scale = Math.min(1.2, Math.max(minZoomScale, 1 / Math.max(bounds.width / width, bounds.height / height)));
       const translateX = width / 2 - scale * (bounds.x + bounds.width / 2);
       const translateY = height / 2 - scale * (bounds.y + bounds.height / 2);
-  
+
       svg.call(zoom.transform, d3.zoomIdentity.translate(translateX, translateY).scale(scale));
     }).catch(error => {
       console.error("Failed to load dendrogram data:", error);
