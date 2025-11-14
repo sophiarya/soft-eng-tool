@@ -134,7 +134,9 @@
     }
 
     .zoom-controls button {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 40px;
       height: 40px;
       border: none;
@@ -142,10 +144,50 @@
       font-size: 18px;
       cursor: pointer;
       border-bottom: 1px solid #eee;
+      color: #333;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .zoom-controls button:last-child {
+      border-bottom: none;
     }
 
     .zoom-controls button:hover {
       background: #f5f5f5;
+      color: #111;
+    }
+
+    .search-toggle-btn {
+      position: absolute;
+      top: 110px;
+      left: 10px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+      cursor: pointer;
+      transition: top 0.3s ease, background 0.2s ease, color 0.2s ease;
+      color: #333;
+      z-index: 12;
+    }
+
+    .search-toggle-btn svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .search-toggle-btn:hover {
+      background: #f5f5f5;
+      color: #111;
+    }
+
+    .search-bar.active ~ .search-toggle-btn {
+      top: 160px;
     }
 
     .highlight-match circle {
@@ -423,9 +465,15 @@
       <button id="search-close" title="Close search (Esc)">&times;</button>
     </div>
     <div class="zoom-controls">
-      <button id="zoom_in">+</button>
-      <button id="zoom_out">−</button>
+      <button id="zoom_in" title="Zoom in">+</button>
+      <button id="zoom_out" title="Zoom out">−</button>
     </div>
+    <button id="search-toggle" class="search-toggle-btn" title="Search topics">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2"/>
+        <line x1="16.7071" y1="16.2929" x2="21" y2="20.5858" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
     <div id="tooltip" class="tooltip"></div>
     <svg id="dendrogram"></svg>
     <aside id="right-panel">
@@ -474,19 +522,44 @@
     const searchInput = document.getElementById("search-input");
     const searchClose = document.getElementById("search-close");
     const searchResultsInfo = document.getElementById("search-results-info");
+    const searchToggleButton = document.getElementById("search-toggle");
 
     let allNodes = [];
     let matchingNodes = [];
     let currentMatchIndex = -1;
+
+    const isSearchBarActive = () => searchBar.classList.contains("active");
+
+    const openSearchBar = () => {
+      if (isSearchBarActive()) {
+        return;
+      }
+      searchBar.classList.add("active");
+      searchInput.focus();
+      searchInput.select();
+    };
+
+    const toggleSearchBar = () => {
+      if (isSearchBarActive()) {
+        closeSearch();
+      } else {
+        openSearchBar();
+      }
+    };
+
+    if (searchToggleButton) {
+      searchToggleButton.addEventListener("click", () => {
+        toggleSearchBar();
+      });
+    }
 
     // Handle Ctrl/Cmd+F to show custom search
     document.addEventListener("keydown", (e) => {
       // Check for Ctrl+F (Windows/Linux) or Cmd+F (Mac)
       if ((e.ctrlKey || e.metaKey) && e.key === "f") {
         e.preventDefault();
-        searchBar.classList.add("active");
-        searchInput.focus();
-        searchInput.select();
+        toggleSearchBar();
+        return;
       }
 
       // Handle Escape to close search
@@ -515,6 +588,9 @@
       searchResultsInfo.textContent = "";
       matchingNodes = [];
       currentMatchIndex = -1;
+      if (searchToggleButton) {
+        searchToggleButton.focus();
+      }
     }
 
     // Search input handler
