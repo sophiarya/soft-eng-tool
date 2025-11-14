@@ -160,6 +160,25 @@
                     </div>
                     <!-- Global action buttons for closest match -->
                 </section>
+                <!-- Low Match Suggestion Banner -->
+                <div 
+                    id="low-match-suggestion"
+                    class="hidden mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 sm:p-6"
+                >
+                    <div class="flex items-start gap-4">
+                        <div class="flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-amber-900">Low Match Confidence</h3>
+                            <p class="mt-2 text-sm text-amber-800">
+                                A perfect match for your query isn’t showing up just yet — but that just means you’re exploring a topic that’s still broad or unique in our database. You can discover more relevant results by checking nearby topics in the dendrogram. Try clicking a parent or sibling topic to explore related cases and refine your search.
+                                </p>
+                        </div>
+                    </div>
+                </div>
                 <section class="topic-hierarchy-card" data-active-hierarchy-key="{{ initial_hierarchy_key }}">
                     <div class="dendogram-header-text">
                         <h2 class="secondary-color text-lg sm:text-xl md:text-2xl font-semibold">
@@ -342,6 +361,17 @@
                 © 2025 JurisTopic. All rights reserved.
             </div>
         </footer>
+        <!-- Back to Top Button -->
+        <button 
+            id="back-to-top-btn" 
+            class="fixed bottom-8 right-8 p-3 rounded-full bg-brand-blue text-white shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-blue-600 z-40"
+            aria-label="Back to top"
+            title="Back to top"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            </svg>
+        </button>
     </body>
     <script id="hierarchy-data" type="application/json">{{ hierarchy_json | safe }}</script>
     <script id="all-hierarchies-data" type="application/json">{{ all_hierarchies_json | safe }}</script>
@@ -350,6 +380,7 @@
             const hierarchySection = document.querySelector('.topic-hierarchy-card');
             const docsSection = document.getElementById('relevant-docs');
             const searchForm = document.getElementById('results-search-form');
+            const lowMatchSuggestion = document.getElementById('low-match-suggestion');
 
             if (searchForm) {
                 searchForm.addEventListener('submit', (event) => {
@@ -367,6 +398,33 @@
                     }
                 });
             }
+
+            // Check if match score is below 70% and show suggestion
+            const checkMatchScores = () => {
+                const matchPercentages = Array.from(document.querySelectorAll('.match-percentage'));
+                if (matchPercentages.length === 0) {
+                    return;
+                }
+
+                const scores = matchPercentages.map(el => {
+                    const scoreText = el.textContent;
+                    const match = scoreText.match(/(\d+)%/);
+                    return match ? parseInt(match[1], 10) : 0;
+                });
+
+                const lowestScore = Math.min(...scores);
+                
+                if (lowMatchSuggestion) {
+                    if (lowestScore < 70) {
+                        lowMatchSuggestion.classList.remove('hidden');
+                    } else {
+                        lowMatchSuggestion.classList.add('hidden');
+                    }
+                }
+            };
+
+            // Call on page load
+            setTimeout(checkMatchScores, 100);
 
             // Click on per-card hierarchy button
             document.querySelectorAll('.btn-view-hierarchy').forEach((btn) => {
@@ -924,5 +982,29 @@
                 }
             }
         })();
+    </script>
+    <script>
+        // Back to Top Button functionality
+        const backToTopBtn = document.getElementById('back-to-top-btn');
+        if (backToTopBtn) {
+            const showBackToTopBtn = () => {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                if (scrollTop > 300) {
+                    backToTopBtn.classList.remove('opacity-0', 'invisible');
+                    backToTopBtn.classList.add('opacity-100', 'visible');
+                } else {
+                    backToTopBtn.classList.add('opacity-0', 'invisible');
+                    backToTopBtn.classList.remove('opacity-100', 'visible');
+                }
+            };
+
+            window.addEventListener('scroll', showBackToTopBtn);
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
     </script>
 </html>
