@@ -287,6 +287,17 @@
                 <div class="spinner"></div>
             </div>
         </div>
+        <!-- Back to Top Button -->
+        <button 
+            id="back-to-top-btn" 
+            class="fixed bottom-8 right-8 p-3 rounded-full bg-brand-blue text-white shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-blue-600 z-40"
+            aria-label="Back to top"
+            title="Back to top"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            </svg>
+        </button>
     </body>
     <script>
         const sections = document.querySelectorAll("section[id]");
@@ -898,6 +909,29 @@
                         console.error('Error triggering iframe search:', error);
                     }
                 }
+            });
+        }
+
+        // Back to Top Button functionality
+        const backToTopBtn = document.getElementById('back-to-top-btn');
+        if (backToTopBtn) {
+            const showBackToTopBtn = () => {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                if (scrollTop > 300) {
+                    backToTopBtn.classList.remove('opacity-0', 'invisible');
+                    backToTopBtn.classList.add('opacity-100', 'visible');
+                } else {
+                    backToTopBtn.classList.add('opacity-0', 'invisible');
+                    backToTopBtn.classList.remove('opacity-100', 'visible');
+                }
+            };
+
+            window.addEventListener('scroll', showBackToTopBtn);
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             });
         }
     </script>
