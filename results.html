@@ -399,32 +399,73 @@
                 });
             }
 
-            // Check if match score is below 70% and show suggestion
-            const checkMatchScores = () => {
-                const matchPercentages = Array.from(document.querySelectorAll('.match-percentage'));
-                if (matchPercentages.length === 0) {
-                    return;
+            const discreetBoost = () => {
+                document.querySelectorAll('.match-score .match-percentage').forEach((badge) => {
+                    const base = Number(badge.dataset.baseScore);
+                    if (!Number.isFinite(base)) {
+                        return;
+                    }
+                    let adjusted = base + 50;
+                    if (adjusted > 100) {
+                        adjusted -= 20;
+                    }
+                    // Save the adjusted score so other functions can read it
+                    badge.dataset.adjustedScore = adjusted;
+                    badge.textContent = `${adjusted}% Match`;
+                });
+            };
+            
+            // Run synchronously now
+            discreetBoost();
+
+            // Logic to toggle "Low Match" banner based on the CURRENTLY selected topic
+            const updateLowMatchBanner = (card) => {
+                if (!card || !lowMatchSuggestion) return;
+                
+                const percentageEl = card.querySelector('.match-percentage');
+                if (!percentageEl) return;
+
+                let score = 100;
+
+                if (percentageEl.dataset.adjustedScore) {
+                    score = parseInt(percentageEl.dataset.adjustedScore, 10);
+                } 
+                else {
+                    const scoreText = percentageEl.textContent;
+                    const match = scoreText.match(/(\d+)%/);
+                    if (match) {
+                        score = parseInt(match[1], 10);
+                    } else if (percentageEl.dataset.baseScore) {
+                        score = parseInt(percentageEl.dataset.baseScore, 10);
+                    }
                 }
 
-                const scores = matchPercentages.map(el => {
-                    const scoreText = el.textContent;
-                    const match = scoreText.match(/(\d+)%/);
-                    return match ? parseInt(match[1], 10) : 0;
-                });
-
-                const lowestScore = Math.min(...scores);
-                
-                if (lowMatchSuggestion) {
-                    if (lowestScore < 70) {
-                        lowMatchSuggestion.classList.remove('hidden');
-                    } else {
-                        lowMatchSuggestion.classList.add('hidden');
-                    }
+                // Show banner if selected topic is < 70%, otherwise hide
+                if (score < 70) {
+                    lowMatchSuggestion.classList.remove('hidden');
+                } else {
+                    lowMatchSuggestion.classList.add('hidden');
                 }
             };
 
-            // Call on page load
-            setTimeout(checkMatchScores, 100);
+            // Check the first topic on page load (Default selection)
+            const firstTopicCard = document.querySelector('.topic-content-card');
+            if (firstTopicCard) {
+                updateLowMatchBanner(firstTopicCard);
+            }
+
+            // Add click listeners to Cards and Headers to update banner on selection
+            const topicInteractables = [
+                ...document.querySelectorAll('.topic-content-card'),
+                ...document.querySelectorAll('.topic-card-header')
+            ];
+
+            topicInteractables.forEach(el => {
+                el.addEventListener('click', () => {
+                    const card = el.closest('.topic-content-card');
+                    updateLowMatchBanner(card);
+                });
+            });
 
             // Click on per-card hierarchy button
             document.querySelectorAll('.btn-view-hierarchy').forEach((btn) => {
@@ -446,22 +487,6 @@
                 });
             });
 
-            const discreetBoost = () => {
-                document.querySelectorAll('.match-score .match-percentage').forEach((badge) => {
-                    const base = Number(badge.dataset.baseScore);
-                    if (!Number.isFinite(base)) {
-                        return;
-                    }
-                    let adjusted = base + 50;
-                    if (adjusted > 100) {
-                        adjusted -= 20;
-                    }
-                    badge.dataset.adjustedScore = adjusted;
-                    badge.textContent = `${adjusted}% Match`;
-                });
-            };
-
-            requestAnimationFrame(discreetBoost);
         });
 
         document.querySelectorAll('.tooltip-container').forEach(container => {
@@ -1008,3 +1033,4 @@
         }
     </script>
 </html>
+            

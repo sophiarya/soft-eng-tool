@@ -7,7 +7,7 @@ import json
 import os
 import pprint
 import requests
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Optional
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -41,7 +41,7 @@ def log_with_timestamp(message: str) -> None:
     print(f"[{timestamp}] - {message}")
 
 class WarmupRequest(BaseModel):
-    trigger: str | None = None
+    trigger: Optional[str] = None
 
 @app.post("/search/warmup")
 async def warmup_search(payload: WarmupRequest):
@@ -120,10 +120,10 @@ def _index_nodes(nodes: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
         traverse(node)
     return index
 
-def _find_closest_node(root_tree: Dict[str, Any]) -> tuple[str, Dict[str, Any]] | None:
+def _find_closest_node(root_tree: Dict[str, Any]) -> Optional[Tuple[str, Dict[str, Any]]]:
     """Return (id, data) for the first node flagged as closest within the hierarchy."""
 
-    def traverse(node_id: str, node_data: Dict[str, Any]) -> tuple[str, Dict[str, Any]] | None:
+    def traverse(node_id: str, node_data: Dict[str, Any]) -> Optional[Tuple[str, Dict[str, Any]]]:
         if bool(node_data.get("is_closest")):
             return str(node_id), node_data
 
