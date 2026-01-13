@@ -204,16 +204,75 @@
                             <span>Full Screen</span>
                         </button>
                     </div>
-                    <div class="dendogram-container" tabindex="0">
+                    <!-- Added 'relative' class to container so we can position the tooltip inside it -->
+                                        <div class="dendogram-container relative group" tabindex="0">
                         <iframe
                             id="topic-hierarchy-iframe"
                             src="src/dendogram.html"
-                            class="w-full h-[600px] border-0 custom-scroll"
+                            class="w-full h-[600px] border-0 custom-scroll relative z-10"
                             scrolling="yes"
                             allow="fullscreen"
                             allowfullscreen
                         ></iframe>
-                    </div>               
+
+                        <!-- Navigation Guide Tooltip (Z-Index increased to 30) -->
+                        <div id="nav-guide-wrapper" class="absolute top-4 right-6 z-30">
+                            <button 
+                                type="button"
+                                id="nav-guide-btn" 
+                                class="flex items-center justify-center w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full shadow-md border border-gray-100 text-brand-gray hover:text-brand-blue hover:scale-105 transition-all duration-200 cursor-pointer" 
+                                aria-label="Navigation Guide"
+                                title="How to navigate"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </button>
+                            
+                            <!-- The Tooltip Card -->
+                            <div id="nav-guide-card" class="absolute top-12 right-0 w-72 bg-white rounded-xl shadow-xl border border-gray-100 p-5 opacity-0 invisible transform -translate-y-2 transition-all duration-200 origin-top-right">
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="font-semibold text-brand-blue text-sm">Navigation Controls</h4>
+                                    <button type="button" id="nav-guide-close" class="text-gray-400 hover:text-gray-600">&times;</button>
+                                </div>
+                                <ul class="space-y-3 text-sm text-gray-600">
+                                    <li class="flex items-start gap-3">
+                                        <div class="mt-0.5 flex-shrink-0 w-6 h-6 bg-blue-50 rounded flex items-center justify-center text-brand-blue">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <span class="font-medium text-gray-900 block">Zoom</span>
+                                            Use mouse wheel or pinch gesture to zoom in/out.
+                                        </div>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <div class="mt-0.5 flex-shrink-0 w-6 h-6 bg-blue-50 rounded flex items-center justify-center text-brand-blue">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <span class="font-medium text-gray-900 block">Pan</span>
+                                            Click and drag the canvas to move around.
+                                        </div>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <div class="mt-0.5 flex-shrink-0 w-6 h-6 bg-blue-50 rounded flex items-center justify-center text-brand-blue">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <span class="font-medium text-gray-900 block">Details</span>
+                                            Hover over or click nodes to see topic details.
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                     <div class="legend-container">
                         <div class="legend-item">
                             <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-brand-gray rounded-full flex-shrink-0"></div>
@@ -933,6 +992,45 @@
                     behavior: 'smooth'
                 });
             });
+            // === Navigation Guide Tooltip Logic ===
+    document.addEventListener("DOMContentLoaded", () => {
+        const navBtn = document.getElementById("nav-guide-btn");
+        const navCard = document.getElementById("nav-guide-card");
+        const navClose = document.getElementById("nav-guide-close");
+
+        if (navBtn && navCard && navClose) {
+            // Function to show/hide
+            const toggleNav = (e) => {
+                e.preventDefault(); 
+                e.stopPropagation(); // Stop click from reaching elements behind
+                
+                // Toggle the Tailwind classes that hide the element
+                if (navCard.classList.contains('invisible')) {
+                    navCard.classList.remove('invisible', 'opacity-0', '-translate-y-2');
+                } else {
+                    navCard.classList.add('invisible', 'opacity-0', '-translate-y-2');
+                }
+            };
+
+            const closeNav = () => {
+                navCard.classList.add('invisible', 'opacity-0', '-translate-y-2');
+            };
+
+            // Bind Events
+            navBtn.addEventListener("click", toggleNav);
+            navClose.addEventListener("click", (e) => {
+                e.stopPropagation();
+                closeNav();
+            });
+
+            // Close when clicking outside
+            document.addEventListener("click", (e) => {
+                if (!navCard.contains(e.target) && !navBtn.contains(e.target)) {
+                    closeNav();
+                }
+            });
+        }
+    });
         }
     </script>
 </html>
