@@ -108,9 +108,9 @@
                     <div class="hiw-cards">
                         <div class="hiw-card">
                             <div class="card-img" style="background-image:url('/src/step1.svg');"></div>
-                            <h3 class="card-title">Enter a Case Name</h3>
+                            <h3 class="card-title">Enter a Case Prompt</h3>
                             <p class="card-desc">
-                                Type in any Philippine Supreme Court case, 
+                                Type in any Philippine Supreme Court 
                                 legal topic, or key term you want to explore.
                             </p>
                         </div>
@@ -346,6 +346,28 @@
                 <div class="spinner"></div>
             </div>
         </div>
+
+        <!-- Custom Alert/Toast Notification -->
+        <div id="custom-alert" class="fixed top-6 left-1/2 transform -translate-x-1/2 z-[100] transition-all duration-300 opacity-0 invisible translate-y-[-10px]">
+            <div class="flex items-center w-full max-w-md p-4 mb-4 text-gray-700 bg-white border-l-4 border-red-500 rounded-lg shadow-2xl" role="alert">
+                <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-full">
+                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z"/>
+                    </svg>
+                    <span class="sr-only">Warning icon</span>
+                </div>
+                <div class="ml-3 text-sm font-medium" id="custom-alert-message">
+                    Please add more details to your search so we can show more relevant results.
+                </div>
+                <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8" aria-label="Close" onclick="hideCustomAlert()">
+                    <span class="sr-only">Close</span>
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
         <!-- Back to Top Button -->
         <button 
             id="back-to-top-btn" 
@@ -871,15 +893,49 @@
             }
         }
 
+        // Custom Alert Logic
+        function showCustomAlert(msg) {
+            const alertBox = document.getElementById('custom-alert');
+            const alertMsg = document.getElementById('custom-alert-message');
+            if(alertBox && alertMsg) {
+                alertMsg.textContent = msg;
+                alertBox.classList.remove('opacity-0', 'invisible', 'translate-y-[-10px]');
+                // Auto hide after 4 seconds
+                setTimeout(hideCustomAlert, 4000);
+            }
+        }
+
+        function hideCustomAlert() {
+             const alertBox = document.getElementById('custom-alert');
+             if(alertBox) {
+                alertBox.classList.add('opacity-0', 'invisible', 'translate-y-[-10px]');
+             }
+        }
+
         document.getElementById('search-form').addEventListener('submit', function (e) {
             e.preventDefault();
 
             const queryField = this.querySelector('#search-query');
             const queryValue = queryField ? queryField.value.trim() : '';
-            const wordCount = queryValue ? queryValue.split(/\s+/).filter(Boolean).length : 0;
+            
+            // Check for Special Characters Density
+            // If more than 30% of the input is non-alphanumeric (excluding spaces), trigger alert.
+            const specialCharRatio = queryValue.length > 0 
+                ? queryValue.replace(/[a-zA-Z0-9\s\u00C0-\u00FF]/g, '').length / queryValue.length 
+                : 0;
+            
+            if (specialCharRatio > 0.3) {
+                 showCustomAlert('Please use coherent text and minimize special characters in your search.');
+                 if (queryField) {
+                    queryField.focus();
+                }
+                return;
+            }
 
+            const wordCount = queryValue ? queryValue.split(/\s+/).filter(Boolean).length : 0;
             if (wordCount < 5) {
-                alert('Please enter at least 5 words in your query before searching.');
+                // Replaced native alert with Custom Alert
+                showCustomAlert('Please enter at least 5 words in your query before searching.');
                 if (queryField) {
                     queryField.focus();
                 }
