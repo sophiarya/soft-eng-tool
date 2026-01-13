@@ -492,6 +492,8 @@ input {
 #topic-hierarchy-iframe {
     display: block;
     background: var(--brand-viz-bg);
+    position: relative; /* avoid creating an unexpected stacking context */
+    z-index: 0; /* keep iframe behind floating UI */
 }
 
 #topic-hierarchy-iframe:fullscreen,
@@ -506,10 +508,11 @@ input {
     background-color: var(--brand-viz-bg);
     border: 1px solid var(--brand-viz-border);
     border-radius: 0.75rem;
-    overflow: hidden;
+    /* allow tooltips and floating UI to overflow the container */
+    overflow: visible;
     padding: 0.5rem;
     overflow-x: auto;
-}
+} 
 
 .legend-container {
     display: flex;
@@ -556,6 +559,7 @@ input {
     opacity: 1 !important;
     visibility: visible !important;
     transform: translateY(0) !important;
+    z-index: 100000;
 }
 
 .topic-info-close {
@@ -941,7 +945,9 @@ details[open]>summary .chevron {
     background: #F6FFFA;
     box-shadow: 0 12px 20px rgba(80, 96, 255, 0.12);
     gap: 28px;
-}
+    /* Allow overflowing tooltips to be visible */
+    overflow: visible;
+} 
 
 /* === Header Section === */
 .closest-match-header {
@@ -1030,10 +1036,11 @@ details[open]>summary .chevron {
 
 .tooltip-card {
     position: absolute;
-    top: 100%;
+    /* place tooltip slightly below the trigger for better visibility */
+    top: calc(100% + 8px);
     right: 0;
-    transform: translateY(-10px);
-    width: 260px;
+    width: 320px;
+    max-width: calc(100vw - 48px);
     background: #fff;
     color: #333;
     border-radius: 12px;
@@ -1041,15 +1048,16 @@ details[open]>summary .chevron {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    z-index: 10;
+    transition: opacity 0.3s ease, transform 0.2s ease;
+    z-index: 9999; /* ensure tooltip appears above other elements */
+    white-space: normal;
 }
 
 .tooltip-card.active {
     opacity: 1;
     display: block;
     visibility: visible;
-    transform: translateY(4%);
+    transform: translateY(0);
 }
 
 .tooltip-close {
